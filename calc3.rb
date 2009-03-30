@@ -136,7 +136,7 @@ end
 for i in 2..20
   puts "N = #{i}"
   sol,err1,err2 = solve_hilbert(i)
-  sol.pretty_print
+  puts "sol = #{sol.transpose.row_vectors[0]}" #.pretty_print
   puts "err1 = #{err1}"
   puts "err2 = #{err2}"
   puts "\n"
