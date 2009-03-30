@@ -124,7 +124,7 @@ class Matrix
     for i in 0..(vecs.length - 1)
       vec = vecs[i].to_a
       unless i <= 1
-        return vec[0..(i-1)].all? { |n| n == 0 }
+        return false unless vec[0..(i-1)].all? { |n| n == 0 }
       end
     end
     return true
