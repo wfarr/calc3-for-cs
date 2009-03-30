@@ -4,8 +4,7 @@ require 'mathn'
 
 class Vector
   def find_householder_reflection
-    orig = self
-    a = orig.to_a
+    a = self.to_a
     if a[0].is_a?(Array)
       a = a[0]
     end
@@ -33,39 +32,32 @@ class Matrix
   #
   def householder
     return nil unless self.square?
-    current_iteration = self
-    init_dim = self.row_size
-    h_list = []
+    current_iteration, init_dim, h_list = self,self.row_size, []
     cv = current_iteration.column_vectors[0]
     h = (cv.find_householder_reflection - Matrix.identity(cv.size)).expand_to_dimensions(init_dim,init_dim) + Matrix.identity(init_dim)
     h_list << h
     current_iteration = h * current_iteration
-    for i in 0..(self.row_size - 1)
+    for i in 0...self.row_size
       cv = current_iteration.get_column_vector(i+1)
-      if cv.size < 2
-        break
-      end
+      break if cv.size < 2 || current_iteration.is_upper_triangular?
       h = (cv.find_householder_reflection - Matrix.identity(cv.size)).expand_to_dimensions(init_dim,init_dim) + Matrix.identity(init_dim)
       h_list << h
       current_iteration = h * current_iteration
     end
-    q = h_list.inject(&:*)
-    r = current_iteration
+    q,r = h_list.inject(&:*), current_iteration
     return q,r
   end
   #
   # Expands a matrix to x,y
   #
   def expand_to_dimensions(x,y)
-    curr_x = self.row_size
-    curr_y = self.column_size
-    a = self.to_a
+    curr_x, curr_y, a = self.row_size, self.column_size, self.to_a
     a.each_index do |row|
-      for i in 0..(y - curr_y - 1)
+      for i in 0...(y - curr_y)
         a[row] = a[row].insert(0,0)
       end
     end
-    for i in 0..(x - curr_x - 1)
+    for i in 0...(x - curr_x)
       a = a.insert(0,Array.new(y){0})
     end
     return Matrix.rows(a)
@@ -121,10 +113,10 @@ class Matrix
 
   private
   def triangular(vecs)
-    for i in 0..(vecs.length - 1)
+    for i in 0...vecs.length
       vec = vecs[i].to_a
       unless i <= 1
-        return false unless vec[0..(i-1)].all? { |n| n == 0 }
+        return false unless vec[0...i].all? { |n| n == 0 }
       end
     end
     return true
