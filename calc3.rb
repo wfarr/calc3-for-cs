@@ -25,7 +25,7 @@ end
 
 class Matrix
   #
-  # Perform an LU decomposition through partial pivoting
+  # Perform an LU decomposition.
   #
   def lu_decomp
     n = self.row_size()
@@ -48,8 +48,9 @@ class Matrix
     u_final = a
     return l_final,u_final
   end
+
   #
-  # Performs a Householder reflection for self.
+  # Performs a Householder reflection for self to find its QR decomposition.
   #
   def householder
     return nil unless self.square?
