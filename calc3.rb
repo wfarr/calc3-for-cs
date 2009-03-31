@@ -28,6 +28,30 @@ end
 
 class Matrix
   #
+  # Perform an LU decomposition through partial pivoting
+  #
+  def lu_decomp
+    n = self.row_size()
+    a = self
+    l_n = []
+    cvs = a.column_vectors.map{|v|v.to_a}
+    for k in 0...cvs.length
+      for j in 0...cvs.length
+        l_new = Matrix.identity(n).to_a
+        if l_new[j][k] == 1 || j < k
+          next
+        end
+        l_new[j][k] = - (cvs[k][j] / cvs[k][k])
+        l_n << l_new
+        a = Matrix[*l_new] * Matrix[*cvs.transpose]
+        cvs = a.column_vectors.map{|v|v.to_a}
+      end
+    end
+    l_final = l_n.map{|m|Matrix[*m].inverse}.inject(&:*)
+    u_final = a
+    return l_final,u_final
+  end
+  #
   # Performs a Householder reflection for self.
   #
   def householder
@@ -129,7 +153,18 @@ class Matrix
   end
 end
 
-def solve_hilbert(size)
+
+def solve_lu_hilbert(size)
+  h = Matrix.hilbert(size)
+  l,u = h.lu_decomp
+  b = Vector.elements(Array.new(size){1})
+  x = u.inverse * l.inverse * b.covector.transpose
+  err1 = ((l * u) - h).inf_norm
+  err2 = ((h * x) - b).column(0).r
+  return x, err1, err2
+end
+
+def solve_hilbert_householder(size)
   h = Matrix.hilbert(size)
   q,r = h.householder
   b = Vector.elements(Array.new(size){1})
@@ -139,11 +174,22 @@ def solve_hilbert(size)
   return x, err1, err2
 end
 
+# LU
 for i in 2..20
   puts "N = #{i}"
-  sol,err1,err2 = solve_hilbert(i)
+  sol,err1,err2 = solve_lu_hilbert(i)
   puts "sol = #{sol.transpose.row_vectors[0]}" #.pretty_print
   puts "err1 = #{err1}"
   puts "err2 = #{err2}"
   puts "\n"
 end
+
+# Householder
+# for i in 2..20
+#   puts "N = #{i}"
+#   sol,err1,err2 = solve_hilbert_householder(i)
+#   puts "sol = #{sol.transpose.row_vectors[0]}" #.pretty_print
+#   puts "err1 = #{err1}"
+#   puts "err2 = #{err2}"
+#   puts "\n"
+# end
