@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby1.9
 
 require 'mathn'
+require 'fileutils'
 
 class Vector
   def find_householder_reflection
@@ -174,22 +175,28 @@ def solve_hilbert_householder(size)
   return x, err1, err2
 end
 
+output = File.new("data.txt", "w+")
+
+towrite = ""
+
 # LU
 for i in 2..20
-  puts "N = #{i}"
   sol,err1,err2 = solve_lu_hilbert(i)
-  puts "sol = #{sol.transpose.row_vectors[0]}" #.pretty_print
-  puts "err1 = #{err1}"
-  puts "err2 = #{err2}"
-  puts "\n"
+  towrite << "N = #{i}\n"
+  towrite << "sol = #{sol.transpose.row_vectors[0]}\n"
+  towrite << "err1 = #{err1}\n"
+  towrite << "err2 = #{err2}\n"
+  towrite << "\n"
 end
 
 # Householder
-# for i in 2..20
-#   puts "N = #{i}"
-#   sol,err1,err2 = solve_hilbert_householder(i)
-#   puts "sol = #{sol.transpose.row_vectors[0]}" #.pretty_print
-#   puts "err1 = #{err1}"
-#   puts "err2 = #{err2}"
-#   puts "\n"
-# end
+for i in 2..20
+  sol,err1,err2 = solve_hilbert_householder(i)
+  towrite << "N = #{i}\n"
+  towrite << "sol = #{sol.transpose.row_vectors[0]}\n"
+  towrite << "err1 = #{err1}\n"
+  towrite << "err2 = #{err2}\n"
+  towrite << "\n"
+end
+
+output.write(towrite)
