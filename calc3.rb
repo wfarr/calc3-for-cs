@@ -28,7 +28,7 @@ class Matrix
   #
   # Perform an LU decomposition.
   #
-  def lu_decomp
+  def lu_decomposition
     n = self.row_size()
     a = self
     l_n = []
@@ -167,7 +167,7 @@ end
 
 def solve_lu_hilbert(size)
   h = Matrix.hilbert(size)
-  l,u = h.lu_decomp
+  l,u = h.lu_decomposition
   b = Vector.elements(Array.new(size){1})
   x = u.inverse * l.inverse * b.covector.transpose
   err1 = ((l * u) - h).inf_norm
