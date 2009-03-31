@@ -24,6 +24,7 @@ class Vector
 end
 
 class Matrix
+
   #
   # Perform an LU decomposition.
   #
@@ -70,6 +71,12 @@ class Matrix
     end
     q,r = h_list.inject(&:*), current_iteration
     return q,r
+  end
+
+  #
+  # Performs a Givens rotation for self to find its QR decomposition.
+  #
+  def givens
   end
   #
   # Expands a matrix to x,y
