@@ -89,6 +89,12 @@ class Matrix
     puts str
   end
   #
+  # Finds the norm where p = infinity
+  #
+  def inf_norm
+      self.to_a.map{|a|a.map{|ar|ar.abs}.inject(&:+)}.sort[0]
+  end
+  #
   # Determines whether or not a matrix is lower triangular, where all values above
   # the diagonal are 0.
   #
@@ -128,7 +134,7 @@ def solve_hilbert(size)
   q,r = h.householder
   b = Vector.elements(Array.new(size){1})
   x = r.inverse * q.inverse * b.covector.transpose
-  err1 = ((q * r) - h).to_a.map{|ar|ar.map{|arr|arr.abs}.inject(&:+)}.sort[0]
+  err1 = ((q * r) - h).inf_norm
   err2 = ((h * x) - b).column(0).r
   return x, err1, err2
 end
