@@ -29,6 +29,7 @@ class Matrix
   # Perform an LU decomposition.
   #
   def lu_decomposition
+    return nil unless self.square?
     n = self.row_size()
     a = self
     l_n = []
@@ -77,6 +78,20 @@ class Matrix
   # Performs a Givens rotation for self to find its QR decomposition.
   #
   def givens
+    return nil unless self.square?
+    current_iteration = self
+    rotations = []
+    # some stuff
+    for i in 0...self.row_size
+      # check each column for zeros in the right spot
+      # use rotations on theta to make the resulting matrix 0
+      break if current_iteration.is_upper_triangular?
+      rot = current_iteration.get_rotation_matrix #implement
+      rotations << rot
+      current_iteration = rot * current_iteration
+    end
+    q,r = rotations.inject(&:*), current_iteration
+    return q,r
   end
   #
   # Expands a matrix to x,y
