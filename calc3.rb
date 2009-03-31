@@ -189,6 +189,7 @@ output = File.new("data.txt", "w+")
 towrite = ""
 
 # LU
+towrite << "\n=========================================\n=========== LU Decomposition ============\n=========================================\n"
 for i in 2..20
   sol,err1,err2 = solve_lu_hilbert(i)
   towrite << "N = #{i}\n"
@@ -199,6 +200,7 @@ for i in 2..20
 end
 
 # Householder
+towrite << "\n=========================================\n========= Householder Method  ===========\n=========================================\n"
 for i in 2..20
   sol,err1,err2 = solve_hilbert_householder(i)
   towrite << "N = #{i}\n"
