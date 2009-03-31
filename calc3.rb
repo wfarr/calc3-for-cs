@@ -6,12 +6,8 @@ require 'fileutils'
 class Vector
   def find_householder_reflection
     a = self.to_a
-    if a[0].is_a?(Array)
-      a = a[0]
-    end
-
+    a = a[0] if a[0].is_a?(Array)
     a[0] = a[0] + sign(a[0]) * self.r
-
     u = Vector[*a]
     norm_u_sqrd = u.r**2
     uut = u.covector.transpose * u.covector
@@ -35,7 +31,7 @@ class Matrix
     n = self.row_size()
     a = self
     l_n = []
-    cvs = a.column_vectors.map{|v|v.to_a}
+    cvs = a.column_vectors.map { |v| v.to_a }
     for k in 0...cvs.length
       for j in 0...cvs.length
         l_new = Matrix.identity(n).to_a
@@ -45,10 +41,10 @@ class Matrix
         l_new[j][k] = - (cvs[k][j] / cvs[k][k])
         l_n << l_new
         a = Matrix[*l_new] * Matrix[*cvs.transpose]
-        cvs = a.column_vectors.map{|v|v.to_a}
+        cvs = a.column_vectors.map { |v| v.to_a }
       end
     end
-    l_final = l_n.map{|m|Matrix[*m].inverse}.inject(&:*)
+    l_final = l_n.map { |m| Matrix[*m].inverse }.inject(&:*)
     u_final = a
     return l_final,u_final
   end
@@ -57,7 +53,9 @@ class Matrix
   #
   def householder
     return nil unless self.square?
-    current_iteration, init_dim, h_list = self,self.row_size, []
+    current_iteration = self
+    init_dim = self.row_size
+    h_list = []
     cv = current_iteration.column_vectors[0]
     h = (cv.find_householder_reflection - Matrix.identity(cv.size)).expand_to_dimensions(init_dim,init_dim) + Matrix.identity(init_dim)
     h_list << h
@@ -117,7 +115,11 @@ class Matrix
   # Finds the norm where p = infinity
   #
   def inf_norm
-      self.to_a.map{|a|a.map{|ar|ar.abs}.inject(&:+)}.sort[0]
+    self.to_a.map do |a|
+      a.map do |ar|
+        ar.abs
+      end.inject(&:+)
+    end.sort[0]
   end
   #
   # Determines whether or not a matrix is lower triangular, where all values above
@@ -176,7 +178,6 @@ def solve_hilbert_householder(size)
 end
 
 output = File.new("data.txt", "w+")
-
 towrite = ""
 
 # LU
