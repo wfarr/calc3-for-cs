@@ -79,18 +79,25 @@ class Matrix
   #
   def givens
     return nil unless self.square?
-    current_iteration = self
-    rotations = []
-    # some stuff
-    for i in 0...self.row_size
-      # check each column for zeros in the right spot
-      # use rotations on theta to make the resulting matrix 0
-      break if current_iteration.is_upper_triangular?
-      rot = current_iteration.get_rotation_matrix #implement
-      rotations << rot
-      current_iteration = rot * current_iteration
+    n = self.row_size
+    a = self
+    g_n = []
+    cvs = a.column_vectors.map { |v| v.to_a }
+    for i in 0...cvs.length
+      for j in 0...cvs.length
+        next unless j > i
+        g = Matrix.identity(n).to_a
+        c = cvs[i][i] / Math.sqrt(cvs[i][i]**2 + cvs[i][j]**2)
+        s = -cvs[i][j] / Math.sqrt(cvs[i][i]**2 + cvs[i][j]**2)
+        g[i][i], g[j][j] = c, c
+        g[j][i], g[i][j] = s, -s
+        g = Matrix[*g]
+        g_n << g
+        a = g * a
+        cvs = a.column_vectors.map { |v| v.to_a }
+      end
     end
-    q,r = rotations.inject(&:*), current_iteration
+    q,r = g_n.map { |m| m.t }.inject(&:*), a
     return q,r
   end
   #
@@ -200,6 +207,16 @@ def solve_hilbert_householder(size)
   return x, err1, err2
 end
 
+def solve_hilbert_givens(size)
+  h = Matrix.hilbert(size)
+  q,r = h.givens
+  b = Vector.elements(Array.new(size){1})
+  x = r.inverse * q.inverse * b.covector.transpose
+  err1 = ((q * r) - h).inf_norm
+  err2 = ((h * x) - b).column(0).r
+  return x, err1, err2
+end
+
 output = File.new("data.txt", "w+")
 towrite = ""
 
@@ -218,6 +235,17 @@ end
 towrite << "\n=========================================\n========= Householder Method  ===========\n=========================================\n"
 for i in 2..20
   sol,err1,err2 = solve_hilbert_householder(i)
+  towrite << "N = #{i}\n"
+  towrite << "sol = #{sol.transpose.row_vectors[0]}\n"
+  towrite << "err1 = #{err1}\n"
+  towrite << "err2 = #{err2}\n"
+  towrite << "\n"
+end
+
+# Givens
+towrite << "\n=========================================\n========== Givens Rotations  ============\n=========================================\n"
+for i in 2..20
+  sol,err1,err2 = solve_hilbert_givens(i)
   towrite << "N = #{i}\n"
   towrite << "sol = #{sol.transpose.row_vectors[0]}\n"
   towrite << "err1 = #{err1}\n"
