@@ -12,7 +12,7 @@ class Matrix
     wArr = Array.new(a.column_size) { |i| i == 0 ? 1 : 0 }
     #r,u,l values used to compute eigenvalue
     r, u, l = 0, 0, 0
-    q = a*Matrix.column_vector([*bArr])
+    q = a * Vector[*bArr].covector.transpose
     qArrOld = q.to_a
     qArrNew = []
     #Converts aArrNew into an array of numbers instead of arrays
@@ -29,7 +29,7 @@ class Matrix
       r = (u/l).to_f
       b = q
       bArr = qArrNew
-      q = a * bArr.covector.transpose
+      q = a * Vector[*bArr].covector.transpose
       qArrOld = q.to_a
       qArrNew = []
       for i in 0...qArrOld.size
