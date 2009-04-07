@@ -9,10 +9,8 @@ class Matrix
     #bArr is an array of ones, the original guess
     bArr = Array.new(a.column_size,1)
     #wArr is [1,0,0,0,0...]
-    wArr = [1]
-    for i in 0...a.column_size-1
-      wArr.push(0)
-    end
+    wArr = Array.new(a.column_size,0)
+    wArr[0] = 1
     #r,u,l values used to compute eigenvalue
     r = 0
     u = 0
