@@ -11,9 +11,7 @@ class Matrix
     #wArr is [1,0,0,0,0...]
     wArr = Array.new(a.column_size) { |i| i == 0 ? 1 : 0 }
     #r,u,l values used to compute eigenvalue
-    r = 0
-    u = 0
-    l = 0
+    r, u, l = 0, 0, 0
     q = a*Matrix.column_vector([*bArr])
     qArrOld = q.to_a
     qArrNew = []
