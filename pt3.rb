@@ -7,10 +7,9 @@ class Matrix
   def power_method
     a = self
     #bArr is an array of ones, the original guess
-    bArr = Array.new(a.column_size,1)
+    bArr = Array.new(a.column_size) { 1 }
     #wArr is [1,0,0,0,0...]
-    wArr = Array.new(a.column_size,0)
-    wArr[0] = 1
+    wArr = Array.new(a.column_size) { |i| i == 0 ? 1 : 0 }
     #r,u,l values used to compute eigenvalue
     r = 0
     u = 0
