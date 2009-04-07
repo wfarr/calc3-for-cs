@@ -21,8 +21,8 @@ class Matrix
     end
 
     #Iteration for eigenvalue
-    for z in 0...30
-      for j in 0...wArr.size-1
+    for z in 0..30
+      for j in 0...wArr.size
         u = u + Vector[*wArr].inner_product(Vector[*qArrNew])
         l = l + Vector[*wArr].inner_product(Vector[*bArr])
       end
