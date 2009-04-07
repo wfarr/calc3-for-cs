@@ -34,7 +34,7 @@ class Matrix
       r = (u/l).to_f
       b = q
       bArr = qArrNew
-      q = a*Matrix.column_vector([*bArr])
+      q = a * bArr.covector.transpose
       qArrOld = q.to_a
       qArrNew = []
       for i in 0...qArrOld.size
