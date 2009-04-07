@@ -24,21 +24,12 @@ class Matrix
     for i in 0...qArrOld.size
       qArrNew.push(qArrOld[i][0])
     end
-    
-    #Compute dot product of two vectors
-    def dot_product l1, l2
-      sum = 0
-      for i in 0...l1.size-1
-        sum += l1[i] * l2[i]
-      end
-      sum
-    end
 
     #Iteration for eigenvalue
     for z in 0...30
       for j in 0...wArr.size-1
-        u = u + dot_product(wArr,qArrNew) 
-        l = l + dot_product(wArr,bArr) 	
+        u = u + Vector[*wArr].inner_product(Vector[*qArrNew])
+        l = l + Vector[*wArr].inner_product(Vector[*bArr])
       end
       r = (u/l).to_f
       b = q
