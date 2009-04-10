@@ -1,8 +1,7 @@
 #### Part One ####
 ##################
 
-# Figure out why Householder goes nuts at n=13 (SHOULD BE THE CASE)
-# Implement Givens
+# Figure out why Householder and Givens go nuts at n=13 (SHOULD BE THE CASE)
 
 #### Part Two ####
 ##################
@@ -12,11 +11,11 @@
 ### Part Three ###
 ##################
 
-# Talk to other groupmate
+# Everything but the actual implementation of power method
 
 ##### Report #####
 ##################
 
 # Look into doing it in LaTeX
-  # Depends on getting graphs in there nicely
+  # Have a PDF on doing graphs in LaTeX
   # Could net us some extra credit?
