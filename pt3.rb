@@ -20,12 +20,24 @@ class Matrix
       qArrNew.push(qArrOld[i][0])
     end
 
+    u = u + Vector[*wArr].inner_product(Vector[*qArrNew])
+    l = l + Vector[*wArr].inner_product(Vector[*bArr])
+    r_prev = r
+    r = (u/l).to_f
+    b = q
+    bArr = qArrNew
+    q = a * Vector[*bArr].covector.transpose
+    qArrOld = q.to_a
+    qArrNew = []
+    for i in 0...qArrOld.size
+      qArrNew.push(qArrOld[i][0])
+    end
+
     #Iteration for eigenvalue
-    for z in 0..30
-      for j in 0...wArr.size
-        u = u + Vector[*wArr].inner_product(Vector[*qArrNew])
-        l = l + Vector[*wArr].inner_product(Vector[*bArr])
-      end
+    while true
+      u = u + Vector[*wArr].inner_product(Vector[*qArrNew])
+      l = l + Vector[*wArr].inner_product(Vector[*bArr])
+      r_prev = r
       r = (u/l).to_f
       b = q
       bArr = qArrNew
@@ -35,6 +47,7 @@ class Matrix
       for i in 0...qArrOld.size
         qArrNew.push(qArrOld[i][0])
       end
+      break if (r - r_prev).abs <= 0.00000001
     end
     return r
   end
