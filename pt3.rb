@@ -3,49 +3,47 @@
 require 'common'
 
 class Matrix
-  #Compute largest eigenvalue of a square matrix
+  #
+  # Compute largest eigenvalue of a square matrix
+  #
   def power_method
     a = self
-    #bArr is an array of ones, the original guess
-    bArr = Array.new(a.column_size) { 1 }
-    #wArr is [1,0,0,0,0...]
-    wArr = Array.new(a.column_size) { |i| i == 0 ? 1 : 0 }
-    #r,u,l values used to compute eigenvalue
+    b = Array.new(a.column_size) { 1 }
+    w = Array.new(a.column_size) { |i| i == 0 ? 1 : 0 }
     r, u, l = 0, 0, 0
-    q = a * Vector[*bArr].covector.transpose
-    qArrOld = q.to_a
-    qArrNew = []
-    #Converts aArrNew into an array of numbers instead of arrays
-    for i in 0...qArrOld.size
-      qArrNew.push(qArrOld[i][0])
+    q = a * Vector[*b].covector.transpose
+    q_old = q.to_a
+    q_new = []
+
+    for i in 0...q_old.size
+      q_new.push(q_old[i][0])
     end
 
-    u = u + Vector[*wArr].inner_product(Vector[*qArrNew])
-    l = l + Vector[*wArr].inner_product(Vector[*bArr])
+    u = u + Vector[*w].inner_product(Vector[*q_new])
+    l = l + Vector[*w].inner_product(Vector[*b])
     r_prev = r
     r = (u/l).to_f
-    b = q
-    bArr = qArrNew
-    q = a * Vector[*bArr].covector.transpose
-    qArrOld = q.to_a
-    qArrNew = []
-    for i in 0...qArrOld.size
-      qArrNew.push(qArrOld[i][0])
+    b = q_new
+    q = a * Vector[*b].covector.transpose
+    q_old = q.to_a
+    q_new = []
+
+    for i in 0...q_old.size
+      q_new.push(q_old[i][0])
     end
 
-    #Iteration for eigenvalue
     while true
-      u = u + Vector[*wArr].inner_product(Vector[*qArrNew])
-      l = l + Vector[*wArr].inner_product(Vector[*bArr])
+      u = u + Vector[*w].inner_product(Vector[*q_new])
+      l = l + Vector[*w].inner_product(Vector[*b])
       r_prev = r
       r = (u/l).to_f
       b = q
-      bArr = qArrNew
-      q = a * Vector[*bArr].covector.transpose
-      qArrOld = q.to_a
-      qArrNew = []
-      for i in 0...qArrOld.size
-        qArrNew.push(qArrOld[i][0])
+      b = q_new
+      q = a * Vector[*b].covector.transpose
+      q_old = q.to_a
+      q_new = []
+      for i in 0...q_old.size
+        q_new.push(q_old[i][0])
       end
       break if (r - r_prev).abs <= 0.00000001
     end
