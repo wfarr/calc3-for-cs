@@ -146,7 +146,7 @@ def solve_hilbert_givens(size)
   return x, err1, err2
 end
 
-output = File.new("data.txt", "w+")
+output = File.new("data1.txt", "w+")
 towrite = ""
 
 # LU
