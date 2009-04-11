@@ -64,6 +64,11 @@ leslie = Matrix[[0,  1.2, 1.1,0.9,0.1 ,0  ,0   ,0   ,0],
                 [0,  0,   0,  0,  0,   0,  0.77,0   ,0],
                 [0,  0,   0,  0,  0,   0,  0,   0.40,0]]
 
+# largest eigenvalue of leslie
+
+content << "largest lambda: #{leslie.power_method}\n"
+
+
 # population distributions
 
 x_0 = Matrix[[2.1], [1.9], [1.8], [2.1], [2.0], [1.7], [1.2], [0.9], [0.5]]
