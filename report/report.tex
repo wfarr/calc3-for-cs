@@ -46,7 +46,7 @@ Notations that might seem confusing unless one has a background in all three of 
 
 \item[Basic Syntax]
 
-  Comments are preceded by a \#.
+  Comments are preceded by a \texttt{\#}.
   Strings are wrapped in either single- or double-quotes.
   Indentation is two spaces.
   Rather than using indentation-based block delimiters or curly braces,
@@ -75,16 +75,16 @@ Notations that might seem confusing unless one has a background in all three of 
   
 \item[Ranges]
   
-  Ranges are represented in Ruby with one of two operators, .. or ... .
-  0..10 is an inclusive range ($[0,10]$) in a more mathematical notation,
-  whereas 0...5 is exclusive ($[0,5)$).
+  Ranges are represented in Ruby with one of two operators, \texttt{..} or \texttt{...}.
+  \texttt{0..10} is an inclusive range ($[0,10]$) in a more mathematical notation,
+  whereas \texttt{0...5} is exclusive ($[0,5)$).
   Ranges can be iterated across.
   
 \item[Method Invocation]
 
   In Ruby, method invocation has optional parens.
-  Rather than using the form instance.method(arg1, arg2),
-  one can use the form instance.method arg1, arg2.
+  Rather than using the form \texttt{instance.method(arg1, arg2)},
+  one can use the form \texttt{instance.method arg1, arg2}.
   In the case where an invocation doesn't have arguments,
   the parentheses are still optional.
 
@@ -99,13 +99,13 @@ Notations that might seem confusing unless one has a background in all three of 
 \item[Notation]
 
   Ruby has a common nomenclature for expressing its classes and their methods.
-  Object\#method is the de facto standard among Rubyists, hence, that's the form
+  \texttt{Object\#method} is the de facto standard among Rubyists, hence, that's the form
   we'll use here.
-  Similarly, \#=> is used to demonstrate return values.
+  Similarly, \texttt{\#=$>$} is used to denote return values.
 
 \item[Further Notes]
 
-  Ruby's Matrix and Vector classes lack \#[]= methods, therefore, we often convert
+  Ruby's Matrix and Vector classes lack \texttt{\#[]=} methods, therefore, we often convert
   these two datatypes to arrays and back again to perform matrix or vector arithmetic
   or other operations.
 
