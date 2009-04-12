@@ -8,46 +8,45 @@ class Matrix
   #
   def power_method
     a = self
-    b = Array.new(a.column_size) { 1 }
+    u_prev = Array.new(a.column_size) { 1 }
     w = Array.new(a.column_size) { |i| i == 0 ? 1 : 0 }
-    r, u, l = 0, 0, 0
-    q = a * Vector[*b].covector.transpose
-    q_old = q.to_a
-    q_new = []
+    lambda, innerProd1,innerProd2 = 0, 0, 0
+    u_new_matrix = a * Vector[*u_prev].covector.transpose
+    u_new_array = u_new_matrix.to_a
+    u_new = []
 
-    for i in 0...q_old.size
-      q_new.push(q_old[i][0])
+    for i in 0...u_new_array.size
+      u_new.push(u_new_array[i][0])
     end
 
-    u = u + Vector[*w].inner_product(Vector[*q_new])
-    l = l + Vector[*w].inner_product(Vector[*b])
-    r_prev = r
-    r = (u/l).to_f
-    b = q_new
-    q = a * Vector[*b].covector.transpose
-    q_old = q.to_a
-    q_new = []
+    innerProd1 = innerProd1 + Vector[*w].inner_product(Vector[*u_new])
+    innerProd2 = innerProd2 + Vector[*w].inner_product(Vector[*u_prev])
+    lambda_prev = lambda
+    lambda = (innerProd1/innerProd2).to_f
+    u_prev = u_new
+    u_new_matrix = a * Vector[*u_prev].covector.transpose
+    u_new_array = u_new_matrix.to_a
+    u_new = []
 
-    for i in 0...q_old.size
-      q_new.push(q_old[i][0])
+    for i in 0...u_new_array.size
+      u_new.push(u_new_array[i][0])
     end
 
     while true
-      u = u + Vector[*w].inner_product(Vector[*q_new])
-      l = l + Vector[*w].inner_product(Vector[*b])
-      r_prev = r
-      r = (u/l).to_f
-      b = q
-      b = q_new
-      q = a * Vector[*b].covector.transpose
-      q_old = q.to_a
-      q_new = []
-      for i in 0...q_old.size
-        q_new.push(q_old[i][0])
+      innerProd1 = innerProd1 + Vector[*w].inner_product(Vector[*u_new])
+      innerProd2 = innerProd2 + Vector[*w].inner_product(Vector[*u_prev])
+      lambda_prev = lambda
+      lambda = (innerProd1/innerProd2).to_f
+      u_prev = u_new
+      u_new_matrix = a * Vector[*u_prev].covector.transpose
+      u_new_array = u_new_matrix.to_a
+      u_new = []
+      for i in 0...u_new_array.size
+        u_new.push(u_new_array[i][0])
       end
-      break if (r - r_prev).abs <= 0.00000001
+      break if (lambda - lambda_prev).abs <= 0.00000001
     end
-    return r
+    return lambda
   end
 end
 
@@ -81,13 +80,13 @@ x_5 = leslie * x_4 #=> Matrix[[13.41322675], [6.7595395], [4.856628], [2.7779062
 # total populations
 
 populations = [
-               x_0.to_a.flatten.inject(&:+) * 10000,
-               x_1.to_a.flatten.inject(&:+) * 10000,
+			   x_0.to_a.flatten.inject(&:+) * 10000,
+			   x_1.to_a.flatten.inject(&:+) * 10000,
                x_2.to_a.flatten.inject(&:+) * 10000,
                x_3.to_a.flatten.inject(&:+) * 10000,
                x_4.to_a.flatten.inject(&:+) * 10000,
                x_5.to_a.flatten.inject(&:+) * 10000
-              ]
+			   ]
 
 content << "2010: #{populations[1]}
 2020: #{populations[2]}
@@ -108,13 +107,20 @@ content << "2000 -> 2010: %.2f\%
                          ((populations[4] - populations[3]) / populations[3] * 100),
                          ((populations[5] - populations[4]) / populations[4] * 100)]
 
-# question 4
+# Question 4
+# New Leslie matrix
 
-x_2new = x_2.to_a
-x_2new[1][0] = x_2new[1][0] / 2
-x_2new = Matrix[*x_2new]
+leslie = Matrix[[0,  0.6, 1.1,0.9,0.1 ,0  ,0   ,0   ,0],
+                [0.7,0,   0,  0,  0,   0  ,0   ,0   ,0],
+                [0,  0.85,0,  0,  0,   0  ,0   ,0   ,0],
+                [0,  0,   0.9,0,  0,   0  ,0   ,0   ,0],
+                [0,  0,   0,  0.9,0,   0  ,0   ,0   ,0],
+                [0,  0,   0,  0,  0.88,0  ,0   ,0   ,0],
+                [0,  0,   0,  0,  0,   0.8,0   ,0   ,0],
+                [0,  0,   0,  0,  0,   0,  0.77,0   ,0],
+                [0,  0,   0,  0,  0,   0,  0,   0.40,0]]
 
-x_3new = leslie * x_2new
+x_3new = leslie * x_2
 x_4new = leslie * x_3new
 x_5new = leslie * x_4new
 
@@ -122,8 +128,9 @@ x_5new = leslie * x_4new
 
 # total populations
 
+
 populations_new = [
-                   x_2new.to_a.flatten.inject(&:+) * 10000,
+                   x_2.to_a.flatten.inject(&:+) * 10000,
                    x_3new.to_a.flatten.inject(&:+) * 10000,
                    x_4new.to_a.flatten.inject(&:+) * 10000,
                    x_5new.to_a.flatten.inject(&:+) * 10000
@@ -137,6 +144,7 @@ content <<  "2020: #{populations_new[0]}
 2040: #{populations_new[2]}
 2050: #{populations_new[3]}
 "
+content << "largest lambda: #{leslie.power_method}\n"
 
 # percentage of population change
 
