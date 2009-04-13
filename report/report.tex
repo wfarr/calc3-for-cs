@@ -31,18 +31,20 @@
 \section{Introduction}
 
 Much of the code used within this assignment is Ruby version 1.9.x.
-Since it is, for most intents and purposes, a lesser known language than say, Java,
-we felt it necessary to explain bits of the language which might surface in the code
-we wrote for this project.
+Since it is, for most intents and purposes, a lesser known language than say,
+Java, we felt it necessary to explain bits of the language which might surface
+in the code we wrote for this project.
 
-First and foremost, Ruby shares many similarites with, and is inspired by, Lisp, Smalltalk, and Perl (most likely in that order).
-It contains many of the niceties of functional programming that Lisp does,
-it is truly object oriented in the same way Smalltalk is,
-and it is a terse scripting language with powerful features like Perl is.
+First and foremost, Ruby shares many similarites with, and is inspired by, Lisp,
+Smalltalk, and Perl (most likely in that order).
+It contains many of the niceties of functional programming that Lisp does, it is
+truly object oriented in the same way Smalltalk is, and it is a terse scripting
+language with powerful features like Perl is.
 
 \subsection{Syntax, Language Quirks, Etc.}
 
-Notations that might seem confusing unless one has a background in all three of these languages are such:
+Notations that might seem confusing unless one has a background in all three of
+these languages are such:
 
 \begin{description}
 
@@ -113,27 +115,26 @@ Notations that might seem confusing unless one has a background in all three of 
 
 \end{description}
 
-Hopefully, that should clear up any misconceptions or confusion before addressing the actual
-code at hand.
-That said, all three parts of this report do make use of both some standard libraries in Ruby,
-as well as extensions upon them.
+Hopefully, that should clear up any misconceptions or confusion before
+addressing the actual code at hand.
+That said, all three parts of this report do make use of both some standard
+libraries in Ruby, as well as extensions upon them.
 
 \begin{itemize}
 
-\item http://www.ruby-doc.org/core/classes/Array.html
-\item http://www.ruby-doc.org/core/classes/Matrix.html
-\item http://www.ruby-doc.org/core/classes/Vector.html
+\item \texttt{http://www.ruby-doc.org/core/classes/Array.html}
+\item \texttt{http://www.ruby-doc.org/core/classes/Matrix.html}
+\item \texttt{http://www.ruby-doc.org/core/classes/Vector.html}
 
 \end{itemize}
 
 \subsection{Common Code}
 
-Additionally, we wrote an abstraction layer into some of these classes via monkeypatching in order
-to add some common functionality:
+Additionally, we wrote an abstraction layer into some of these classes via
+monkeypatching in order to add some common functionality:
 
 \lstset{caption=Common Code for All Three Parts}
 \begin{lstlisting}[language=ruby]
-
 class Vector
   private
   def sign(x)
@@ -194,8 +195,10 @@ end
 \subsection{About This Document}
 
 This document was typeset in \LaTeX.
-It uses the \textit{color} and \textit{listings} packages for the code formatting.
-The source code for this document is available at http://github.com/wfarr/calc3-for-cs/report/report.tex.
+It uses the \textit{color} and \textit{listings} packages for the code
+formatting.
+The source code for this document is available at
+\texttt{http://github.com/wfarr/calc3-for-cs/report/report.tex}.
 
 \newpage
 \section{Part One}
@@ -204,8 +207,11 @@ The source code for this document is available at http://github.com/wfarr/calc3-
 %% By: Will Farrington
 %%
 
-The purpose of Part One of the project is to solve the typical $A\vec{x} = \vec{b}$ equation, with $A$ being a Hilbert matrix.
-A Hilbert matrix is a square matrix whose elements follow the form $$H_{ij} = \frac{1}{i + j - 1}$$
+The purpose of Part One of the project is to solve the typical
+$A\vec{x} = \vec{b}$ equation, with $A$ being a Hilbert matrix.
+A Hilbert matrix is a square matrix whose elements follow the form
+
+\[H_{ij} = \frac{1}{i + j - 1}\]
 
 Here's an implementation in Ruby:
 
@@ -222,24 +228,30 @@ end
 Matrix.hilbert(4) #=> Matrix[[1/1,1/2,1/3,1/4], [1/2,1/3,1/4,1/5], [1/3,1/4,1/5,1/6], [1/4,1/5,1/6,1/7]]
 \end{lstlisting}
 
-Often times, simplifying a single matrix $A$ into two or more ``nicer'' matrices (in the case of these algorithms,
-$LU$ or $QR$) can make solving the equation $A\vec{x}=\vec{b}$ easier.
-Such algorithms introduce the potential for error, namely because they are modified forms of the original matrix.
+Often times, simplifying a single matrix $A$ into two or more ``nicer'' matrices
+(in the case of these algorithms, $LU$ or $QR$) can make solving the equation
+$A\vec{x}=\vec{b}$ easier.
+Such algorithms introduce the potential for error, namely because they are
+modified forms of the original matrix.
 
 \subsection{LU Decomposition}
 
-LU Decomposition uses matrix multiplication to reduce a matrix $A$ into two matrices, $L$ (a lower
-triangular matrix) and $U$ (an upper triangular matrix).
+LU Decomposition uses matrix multiplication to reduce a matrix $A$ into two
+matrices, $L$ (a lower triangular matrix) and $U$ (an upper triangular matrix).
 
 \subsubsection{Explanation of the Algorithm}
 
 The algorithm for doing so is fairly simple in and of itself:
 
 \begin{enumerate}
-\item Starting with the first column, find the first non-zero entry below the diagonal. Let this entry be considered $x$. Let that column's diagonal element be $y$.
-\item Multiply an Identity matrix, with the location of the entry $x$ set to the value $-\frac{x}{y}$. This matrix is $L_n$.
+\item Starting with the first column, find the first non-zero entry below the
+  diagonal. Let this entry be considered $x$. Let that column's diagonal element
+  be $y$.
+\item Multiply an Identity matrix, with the location of the entry $x$ set to the
+  value $-\frac{x}{y}$. This matrix is $L_n$.
 \item The resulting matrix is the new $A$ for the next iteration.
-\item Repeat these steps until the resulting $A$ is upper triangular. At this point, $A$ becomes $U$.
+\item Repeat these steps until the resulting $A$ is upper triangular.
+  At this point, $A$ becomes $U$.
 \item To find $L$, multiply $L_1^{-1}L_2^{-1} ... L_n^{-1}$.
 \item Substitute $A$ with $LU$ in the equation $A\vec{x}=\vec{b}$ and solve.
 \end{enumerate}
@@ -274,40 +286,55 @@ class Matrix
 end
 \end{lstlisting}
 
-The algorithm first begins with an essential check: the method \texttt{self.square?} determines if the matrix is a square matrix,
-and returns true if it is.
-LU Decomposition can only be done on square matrices, thus, the method returns nil when given a non-square matrix.
-Next, the algorithm defines $A$ (written as \texttt{a} in the code because \texttt{A} would've been a Constant rather than a variable)
-to be the instance of \texttt{self}.
-To iterate across the columns efficiently, we use \texttt{Matrix\#column\_vectors}, which returns an array of column vectors.
+The algorithm first begins with an essential check: the method
+\texttt{self.square?} determines if the matrix is a square matrix, and returns
+true if it is.
+LU Decomposition can only be done on square matrices, thus, the method returns
+nil when given a non-square matrix.
+Next, the algorithm defines $A$ (written as \texttt{a} in the code because
+\texttt{A} would've been a Constant rather than a variable) to be the instance
+of \texttt{self}.
+To iterate across the columns efficiently, we use
+\texttt{Matrix\#column\_vectors}, which returns an array of column vectors.
 This array is then \texttt{map}ped over to convert the vectors into arrays.
-The end result is that \texttt{cvs} is an array of arrays representing the columns of \texttt{self}.
+The end result is that \texttt{cvs} is an array of arrays representing the
+columns of \texttt{self}.
 
 The actual computation lies in the nested \texttt{for} loops.
-For each iteration, an \texttt{l\_new} matrix is created and converted to an array.
-If the current values of \texttt{j} and \texttt{k} are above the diagonal, then the algorithm skips to the next iteration.
-Next, \texttt{l\_new[j][k]} is set to $-\frac{x}{y}$, as above in the algorithm's description.
-A new \texttt{a} is made as the product of \texttt{l\_new} and \texttt{cvs.transpose} (the same matrix as $A$).
-The last step of each iteration is rebuilding \texttt{cvs} based off of the newest \texttt{a}.
+For each iteration, an \texttt{l\_new} matrix is created and converted to an
+array.
+If the current values of \texttt{j} and \texttt{k} are above the diagonal,
+then the algorithm skips to the next iteration.
+Next, \texttt{l\_new[j][k]} is set to $-\frac{x}{y}$, as above in the
+algorithm's description.
+A new \texttt{a} is made as the product of \texttt{l\_new} and
+\texttt{cvs.transpose} (the same matrix as $A$).
+The last step of each iteration is rebuilding \texttt{cvs} based off of the
+newest \texttt{a}.
 
 Finally, $L$ and $U$ are assigned and returned.
-While \texttt{u\_final} is straight-forward, \texttt{l\_final} is a bit more complicated.
-\texttt{l\_n.map \{ |m| Matrix[*m].inverse \}} returns an array of inverted matrices from the original array of arrays (of arrays).
+While \texttt{u\_final} is straight-forward, \texttt{l\_final} is a bit more
+complicated.
+\texttt{l\_n.map \{ |m| Matrix[*m].inverse \}} returns an array of inverted
+matrices from the original array of arrays (of arrays).
 The one bit of syntactic sugar in that line is the use of \texttt{Matrix[*m]}.
-In this case, \texttt{*} is acting as the glob operator, essentially inserting all the content of the array it's called on rather
-than simply inserting the array itself.
+In this case, \texttt{*} is acting as the glob operator, essentially inserting
+all the content of the array it's called on rather than simply inserting the
+array itself.
 
-This is necessary because \texttt{Matrix[...]} takes a list of rows (in the form of arrays) as its argument.
-Finally, this new array is passed \texttt{Array\#inject}, which applies a given block to all elements of an array and returns the result.
-In this case, the injection is making use of a feature in Ruby 1.9 called \texttt{symbol\_to\_proc}, which allows for passing
-the method the \texttt{:*} symbol and automatically converting it into a proc/lambda.
-Thus, the result of the injection is to multiply all the results of the map together, in order.
-
+This is necessary because \texttt{Matrix[...]} takes a list of rows (in the
+form of arrays) as its argument.
+Finally, this new array is passed \texttt{Array\#inject}, which applies a given
+block to all elements of an array and returns the result.
+In this case, the injection is making use of a feature in Ruby 1.9 called
+\texttt{symbol\_to\_proc}, which allows for passing the method the \texttt{:*}
+symbol and automatically converting it into a proc/lambda.
+Thus, the result of the injection is to multiply all the results of the map
+together, in order.
 
 \subsubsection{Results and Analysis}
 
 The error introduced by the algorithm is effectively $0$.
-
 
 \subsection{Householder Reflections}
 
@@ -441,164 +468,331 @@ Lots of stuff about Gauss-Seidel Method.
 %% By: Mike Hirth
 %%
 
-Less of a clusterfuck.
+The purpose of Part Three is to implement the Power Method in order to find the
+largest eigenvalue of an $n \times n$ matrix, in particular a Leslie matrix that
+models the population of a city.
 
 \subsection{Leslie Matrices}
 
-Also stuff.
+Leslie Matrices are used to describe population growth in a city.
+As shown in the problem, the first row of the matrix represents the per capita
+average number of female offsprings of that age group, or the fecundity.
+The following numbers in each column is the fraction of people surviving to the
+next age class.
+Each entry in the given population distribution matrix is the part of the
+population in that age group, each one being of ten years.
+The first population distribution matrix given is for the year 2000 and is shown
+later in the code.
+
+The given Leslie Matrix of the city shown in Ruby is shown later on in listing 8.
 
 \subsection{Power Method}
 
-Stuff galore.
+The Power Method is used to calculate eigenvalues of $n \times n$ matrices.
+It the class notes it was shown that after defining 
+
+\[\vec{u}(n+1) = A\vec{u}(n)\]
+
+it follows that
+
+\[\lim_{n\to\infty} \frac{{w} \cdot {u(n+1)}}{ {w} \cdot {u(n)}} =\lambda\]
+
+The following is an implementation of the Power Method in Ruby.
+Its explanation is found in the following solutions.
+
+\subsection{Implementation of the Power Method}
+\lstset{caption=Power Method}
+\begin{lstlisting}[language=ruby]
+class Matrix
+  def power_method
+    a = self
+    u_prev = Array.new(a.column_size) { 1 }
+    w = Array.new(a.column_size) { |i| i == 0 ? 1 : 0 }
+    lambda, innerProd1,innerProd2 = 0, 0, 0
+    u_new_matrix = a * Vector[*u_prev].covector.transpose
+    u_new_array = u_new_matrix.to_a
+    u_new = []
+
+    for i in 0...u_new_array.size
+      u_new.push(u_new_array[i][0])
+    end
+
+    innerProd1 = innerProd1 + Vector[*w].inner_product(Vector[*u_new])
+    innerProd2 = innerProd2 + Vector[*w].inner_product(Vector[*u_prev])
+    lambda_prev = lambda
+    lambda = (innerProd1/innerProd2).to_f
+    u_prev = u_new
+    u_new_matrix = a * Vector[*u_prev].covector.transpose
+    u_new_array = u_new_matrix.to_a
+    u_new = []
+
+    for i in 0...u_new_array.size
+      u_new.push(u_new_array[i][0])
+    end
+
+    while true
+      innerProd1 = innerProd1 + Vector[*w].inner_product(Vector[*u_new])
+      innerProd2 = innerProd2 + Vector[*w].inner_product(Vector[*u_prev])
+      lambda_prev = lambda
+      lambda = (innerProd1/innerProd2).to_f
+      u_prev = u_new
+      u_new_matrix = a * Vector[*u_prev].covector.transpose
+      u_new_array = u_new_matrix.to_a
+      u_new = []
+      for i in 0...u_new_array.size
+        u_new.push(u_new_array[i][0])
+      end
+      break if (lambda - lambda_prev).abs <= 0.00000001
+    end
+    return lambda
+  end
+end
+\end{lstlisting}
 
 \subsection{Answering the Question of Population Trends}
 
-\subsubsection{Question 1}
+\subsubsection{Social Factors and Influences of the Leslie Matrix}
 
-The problem asked to interpret the data in the matrix and discuss the social factors that influence those numbers.
-The answer to this question was derived from an analysis of the given Leslie matrix.
+The original problem asks to interpret the data in the matrix and discuss the
+social factors that influence those numbers.
+The solution was derived from an analysis of the given Leslie matrix.
 
-In the given Leslie matrix the survival rate in the different age groups and the fecundity both vary.
+In the given Leslie matrix the survival rate in the different age groups and the
+fecundity both vary.
 The fecundity can be seen when analyzing the first row of the matrix.
-In the age groups 0-9 and 50 and over, the average birth of females from that age class is zero because women are not physically fertile.
-In the ranges 10-19 and 20-29 the birth rate is low because women generally have the most children in their thirties,
-which is apparent in the .9 per capita average in that age group. 
+In the age groups 0-9 and 50 and over, the average birth of females from that
+age class is zero because women are not physically fertile.
+In the ranges 10-19 and 20-29 the birth rate is low because women generally have
+the most children in their thirties, which is apparent in the .9 per capita
+average in that age group. 
 
-Looking at the data in each of the columns of the matrix, the fraction of surviving individuals varies due to several factors.
-The number in each column represents the surviving fraction that makes it to the next group.
-Newborns of age 0-9 have a fraction of .7 possibly due to infant deaths which occur due to birth complications and medical problems.
-The survival rates increase in the groups of 10-19 and 20-29, particularly because individuals are the healthiest during this "prime"
-of their life.
-The rate slowly decreases after 30-39 and over the next few age groups until it drops .4 in the 70-79 age group in which health
-complications due to old age cause more deaths.
+Looking at the data in each of the columns of the matrix, the fraction of
+surviving individuals varies due to several factors.
+The number in each column represents the surviving fraction that makes it to the
+next group.
+Newborns of age 0-9 have a fraction of .7 possibly due to infant deaths which
+occur due to birth complications and medical problems.
+The survival rates increase in the groups of 10-19 and 20-29, particularly
+because individuals are the healthiest during this "prime" of their life.
+The rate slowly decreases after 30-39 and over the next few age groups until it
+drops .4 in the 70-79 age group in which health complications due to old age
+cause more deaths.
 
-\subsubsection{Question 2}
+\subsubsection{Projected Population Distributions}
 
-The problem asked to calculate the population distribution, total population,
-and fraction of change of the total population in 2010, 2020, 2030, 2040, and 2050. 
+\subsection{Population Calculation Implementation}
+In this implementation, the output is written to a file using the
+\texttt{content} variable and the new matrices for the population distributions
+are shown in the code.
+
+\lstset{caption=Populations}
+\begin{lstlisting}[language=ruby]
+output = File.new("data3.txt", "w+")
+content = ""
+
+leslie = Matrix[[0,  1.2, 1.1,0.9,0.1 ,0  ,0   ,0   ,0],
+                [0.7,0,   0,  0,  0,   0  ,0   ,0   ,0],
+                [0,  0.85,0,  0,  0,   0  ,0   ,0   ,0],
+                [0,  0,   0.9,0,  0,   0  ,0   ,0   ,0],
+                [0,  0,   0,  0.9,0,   0  ,0   ,0   ,0],
+                [0,  0,   0,  0,  0.88,0  ,0   ,0   ,0],
+                [0,  0,   0,  0,  0,   0.8,0   ,0   ,0],
+                [0,  0,   0,  0,  0,   0,  0.77,0   ,0],
+                [0,  0,   0,  0,  0,   0,  0,   0.40,0]]
+
+# largest eigenvalue of leslie
+
+content << "largest lambda: #{leslie.power_method}\n"
+
+
+# population distributions
+
+x_0 = Matrix[[2.1], [1.9], [1.8], [2.1], [2.0], [1.7], [1.2], [0.9], [0.5]]
+x_1 = leslie * x_0 #=> Matrix[[6.35], [1.47], [1.615], [1.62], [1.89], [1.76], [1.36], [0.924], [0.36]]
+x_2 = leslie * x_1 #=> Matrix[[5.1875], [4.445], [1.2495], [1.4535], [1.458], [1.6632], [1.408], [1.0472], [0.3696]]
+x_3 = leslie * x_2 #=> Matrix[[8.1624], [3.63125], [3.77825], [1.12455], [1.30815], [1.28304], [1.33056], [1.08416], [0.41888]]
+x_4 = leslie * x_3 #=> Matrix[[9.656485], [5.71368], [3.0865625], [3.400425], [1.012095], [1.151172], [1.026432], [1.0245312], [0.433664]]
+x_5 = leslie * x_4 #=> Matrix[[13.41322675], [6.7595395], [4.856628], [2.77790625], [3.0603825], [0.8906436], [0.9209376], [0.79035264], [0.40981248]]
+
+# total populations
+
+populations = [
+               x_0.to_a.flatten.inject(&:+) * 10000,
+	       x_1.to_a.flatten.inject(&:+) * 10000,
+               x_2.to_a.flatten.inject(&:+) * 10000,
+               x_3.to_a.flatten.inject(&:+) * 10000,
+               x_4.to_a.flatten.inject(&:+) * 10000,
+               x_5.to_a.flatten.inject(&:+) * 10000
+			   ]
+
+content << "2010: #{populations[1]}
+2020: #{populations[2]}
+2030: #{populations[3]}
+2040: #{populations[4]}
+2050: #{populations[5]}
+"
+
+# percentage of population change
+
+content << "2000 -> 2010: %.2f\%
+2010 -> 2020: %.2f\%
+2020 -> 2030: %.2f\%
+2030 -> 2040: %.2f\%
+2040 -> 2050: %.2f\%" % [((populations[1] - populations[0]) / populations[0] * 100),
+                         ((populations[2] - populations[1]) / populations[1] * 100),
+                         ((populations[3] - populations[2]) / populations[2] * 100),
+                         ((populations[4] - populations[3]) / populations[3] * 100),
+                         ((populations[5] - populations[4]) / populations[4] * 100)]
+\end{lstlisting}
+
+The next section requires a calculation of the population distribution, total
+population, and fraction of change of the total population in 2010, 2020, 2030,
+2040, and 2050. 
 
 The approach to this problem was to use the Leslie Matrix Model and multiply the
 Leslie Matrix by each previous population distribution, starting in 2010 and
 using the given distribution for 2000.
 
-The population distribution is shown in the code <pt3.rb:74-79>.
+The population distribution is shown in the code as matrices and written is
+
+\vspace{11pt}
+
+\begin{tabular}{l l}
+$\vec{x}(1)$=&(6.35, 1.47, 1.615, 1.62, 1.89, 1.76, 1.36, 0.924, 0.36)($10^5$)\\
+$\vec{x}(2)$=&(5.1875, 4.445, 1.2495, 1.4535, 1.458, 1.6632, 1.408, 1.0472, 0.3696)($10^5$)\\
+$\vec{x}(2)$=&(8.1624, 3.63125, 3.77825, 1.12455, 1.30815, 1.28304, 1.33056, 1.08416, 0.41888)($10^5$)\\
+$\vec{x}(4)$=&(9.656485, 5.71368, 3.0865625, 3.400425, 1.0121, 1.1512, 1.02643, 1.02453, 0.4337)($10^5$)\\
+$\vec{x}(5)$=&(13.413227, 6.75954, 4.8566, 2.777906, 3.06038, 0.89064, 0.92094, 0.790353, 0.409812)($10^5$)
+\end{tabular}
+
+\vspace{11pt}
+
 The total population of the city in question for each year was as follows:
 
-\begin{tabular}{l r}
+\vspace{11pt}
+
+\begin{tabular}{l l}
 2010: & 173490.0 \\
 2020: & 182815.0 \\
 2030: & 221212.4 \\
 2040: & 265050.467 \\
 2050: & 338794.2932
 \end{tabular}
-\\
+
+\vspace{11pt}
 
 With the fractional change of the total population:
 
+\vspace{11pt}
 
-\begin{tabular}{l r}
+\begin{tabular}{l l}
 2000 $\to$ 2010: & 22.18\% \\
 2010 $\to$ 2020: & 5.37\% \\
 2020 $\to$ 2030: & 21.00\% \\
 2030 $\to$ 2040: & 19.82\% \\
 2040 $\to$ 2050: & 27.82\%
 \end{tabular}
-\\
+
+\vspace{11pt}
 
 By implementing the formula given in the problem,
 $x(k + 1) = A\vec{x}(k), \quad k = 0,1,2,3,4,5$ and $\vec{x}(0)$ the given
 population distribution, the population distribution could be calculated for
 each decade increase.
 This, more simply put, is a multiplication of the Leslie matrix with the
-previous population distribution, implemented here <pt3.rb:74-79>,
-where $\vec{x}_0$ is the $\vec{x}(0)$ population distribution.
+previous population distribution. This is seen in the code as
+\texttt{x\_1 = leslie * x\_0} where \texttt{x\_0} is the $\vec{x}(0)$ population
+distribution.
 In order to find the total population of one year, a simple summation of the
 elements of each of the population distribution matrices (multiplied by $10^5$)
-shown in <pt3.rb:83-90> gives the total population.
+shown in the code as \texttt{population} gives the total population.
 The percent increase of the population was calculated by taking the difference
 in total population divided by the previous population,
-for each decade as shown: <pt3.rb:105-109>. 
+for each decade as the last bit of code. 
 
-\subsubsection{Question 3}
+\subsubsection{Obtaining the Eigenvalue and its Meaning}
 
-The problem asked to write a program implementing the Power method to calculate
-the largest eigenvalue of a $n \times n$ matrix where the method stops after 8
-digits of accuracy, and to use the program to calculate the largest eigenvalue
-of the Leslie matrix.
+In order to evaluate these populations it was required to write a program
+implementing the Power method to calculate the largest eigenvalue of an
+$n \times n$ matrix where the method stops after 8 digits of accuracy.
+The program could be used to calculate the largest eigenvalue of the given
+Leslie matrix.
 
-The problem was approached by developing a Power method algorithm in Ruby that
+The bulk of this problem was in developing a Power method algorithm in Ruby that
 took in an $n \times n$ matrix that iterated until 8 digit decimal precision was
 achieved.
 After testing to see if the program returned correct eigenvalues for any square
 matrix, it was passed the Leslie matrix in order to find the largest eigenvalue.
 
-After running the program using the Leslie matrix <pt3.rb:69>, the method
-returned the eigenvalue $1.28865626235758$.
+After running the program using the Leslie matrix, the method returns the
+eigenvalue 1.28865626235758.
 
 Implementing the power method in Ruby only required the creation of one method
 because of some shared coding with part 1 including the
 \texttt{Vector\#inner\_product} method to calculate the dot product,
 used in part of the algorithm.
 The general formula for the power method can be found in the web notes by Laszlo Erdos
-for \textit{Linear Algebra: Numberical Methods in Numerical Computation of Eigenvalues}(p 62).
+for \textit{Linear Algebra: Numerical Methods in Numerical Computation of Eigenvalues}(p 62).
 
-%% some sort of limit >_>
 
-% lim 	w Â· u(n+1) 
-% nâ†’âˆž 	w Â· u(n)     = Î»1 
+\[\lim_{n\to\infty} \frac{{w} \cdot {u(n+1)}}{ {w} \cdot {u(n)}} =\lambda\]
 
 where $\vec{w}$ and $\vec{u}_0$ are randomly chosen nonzero vectors.
-As shown in <pt3.rb:9-14> the power method program implemented uses a $\vec{w}$
-vector of $[1,0,0 ... ,0_n]^t$
-and a $\vec{u}_0$ vector of
-$[1,1,1 ... ,1_n]^t$ both with
-the number of entries equal to $n$ of the $n \times n$ Leslie matrix.
-These are the vectors we used in class to compute eigenvalues with the Power Method
-but they could be any vectors as long as they are not zero.
-The coding of the algorithm for the actual iterations of the method can be seen in
-the while loop in <pt3.rb:35-49>.
+As shown in the declarations of \texttt{u\_prev} and \texttt{w} in the power
+method program implemented uses a $\vec{w}$ vector of $[1,0,0 ... ,0_n]^t$
+and a $\vec{u}_0$ vector of $[1,1,1 ... ,1_n]^t$ both with the number of entries
+equal to $n$ of the $n \times n$ Leslie matrix.
+These are the vectors we used in class to compute eigenvalues with the Power
+Method but they could be any vectors as long as they are not zero.
+The coding of the algorithm for the actual iterations of the method can be seen
+in the while loop.
 There are two general parts to calculating the eigenvalue.
-First, $\vec{u}_1$ is calculated by <pt3.rb:14> and later $\vec{u}_{(n+1)}$ with the
-same code but over many iterations in the while loop, represented in the code,
-after certain conversions, as $\vec{u}_{new}$.
-This is modeled by $\vec{u}_{(n+1)} = A\vec{u}_{(n)}$ on page 62 of the web notes by Erdos,
-where in the code $\vec{u}_{new}$ is $\vec{u}_{(n+1)}$, $\vec{u}_{prev}$ is $\vec{u}_n$ and
-$A$ is $a$, the given matrix.
+First, $\vec{u}_1$ is calculated and later $\vec{u}_{(n+1)}$ with the same code
+but over many iterations in the while loop, represented in the code, after
+certain conversions, as \texttt{u\_new}.
+This is modeled by $\vec{u}_{(n+1)} = A\vec{u}_{(n)}$ on page 62 of the web
+notes by Erdos, where in the code \texttt{u\_new} is $\vec{u}_{(n+1)}$,
+\texttt{u\_prev} is $\vec{u}_n$ and \texttt{a} is $A$, the given matrix.
 
-The second part involves the eigenvalue calculated using the inner products according
-to the limit exampled earlier.
-The code is first implemented here: <pt3.rb:22,23> and later on over multiple iterations,
-where \texttt{lambda} is the approximated eigenvalue and \texttt{lambda\_prev} is saved for precision calculation.
-The break statement of <pt3.rb:48> terminates the loop after the difference in lambdas is less
-than $10^-8$, guaranteeing that precision.
-The first iteration does not have a lambda to compare so it occurs outside and before the loop,
-creating some repetition of code. When converting matrices to arrays in order to multiply the
-inner product a small problem is presented by the conversion in Ruby.
-When using the function \texttt{Matrix\#.to\_a} the given matrix is converted to an array of arrays
-containing numbers instead of just an array of numbers.
-To take care of this, a new array is created and filled with the elements of the old array shown
-here <pt3.rb:44-46>.
-In the code the first calculation of $\vec{u}_{(n+1)}$ is \texttt{u\_new\_matrix} and in Ruby is of
-the type \texttt{Matrix}.
-The array conversion is denoted as \texttt{u\_new\_array} and finally the array of numbers which
-can actually be used is $\vec{u}_{new}$.
-Once lambda is calculated as a float point of precision to 8 decimals it is returned by 
-\texttt{Matrix\#power\_method}.
+The second part involves the eigenvalue calculated using the inner products
+according to the limit exampled earlier.
+The code is first implemented when using \texttt{innerProd1} and
+\texttt{innerProd2} and later on over multiple iterations, where \texttt{lambda}
+is the approximated eigenvalue and \texttt{lambda\_prev} is saved for precision
+calculation.
+The break statement terminates the loop after the difference in lambdas is less
+than $10^{-8}$, guaranteeing that precision.
+The first iteration does not have a lambda to compare so it occurs outside and
+before the loop, creating some repetition of code.
+When converting matrices to arrays in order to multiply the inner product a
+small problem is presented by the conversion in Ruby.
+When using the \texttt{Matrix\#.to\_a} the given matrix is converted to an
+array of arrays containing numbers instead of just an array of numbers.
+To take care of this, a new array is created and filled with the elements of
+the old array shown as \texttt{u\_new.push(u\_new\_array[i][0])}.
+In the code the first calculation of $\vec{u}_{(n+1)}$ is \texttt{u\_new\_matrix}
+and in Ruby is of the type \texttt{Matrix}.
+The array conversion is denoted as \texttt{u\_new\_array} and finally the array
+of numbers which can actually be used is \texttt{u\_new}.
+Once lambda is calculated as a float point of precision to 8 decimals it is
+returned by \texttt{Matrix\#power\_method}.
 
-The next part of the problem asked to analyze the eigenvalue obtained for the Leslie matrix and
-discuss what this means about the growth of the population in the long run.
+The next part of the problem asked to analyze the eigenvalue obtained for the
+Leslie matrix and discuss what this means about the growth of the population in
+the long run.
 
-Obtaining the eigenvalue of $1.28865626$ reveals the eventual behavior of the population of the given city.
-The eigenvalue is greater than $1$ which means the population will grow.
-If it was less than $1$, the population would over time become extinct and if it was equal to $1$ then the
-population would remain stable.
+Obtaining the eigenvalue of 1.28865626 reveals the eventual behavior of the
+population of the given city.
+The eigenvalue is greater than 1 which means the population will grow.
+If it was less than 1, the population would over time become extinct and if
+it was equal to 1 then the population would remain stable.
 This can be shown using the theorem covered in chapter 4 of Erdos's notes (p 49):
 
 \begin{quote}
 Theoreom 4.1
 
 For a square matrix $A$,
-$||A^k||$ eventually goes to $0$ if and only if, all eigenvalues of $A$ satisfy $|\lambda| < 1$
+$||A^k|| \to 0$ if and only if, all eigenvalues of $A$ satisfy $|\lambda| < 1$
 
 When looking at the iterative model given in the question 
 
@@ -619,9 +813,54 @@ This shows that as n gets larger $\vec{x}(n+1)$ is a scalar multiple of $\vec{x}
 the computed eigenvalue, is positive the population will grow by that growth rate,
 as shown in our given case of the population of a city.
 
-\subsubsection{Question 4}
+\subsubsection{Supposing a Change in Birth Rate}
 
-The problem asked to decrease the birth rate of the second age group by half in 2020
+\subsection{New Population Implementation}
+In this implementation, the output is written to a file using the \texttt{content} variable
+
+\lstset{caption=Populations}
+\begin{lstlisting}[language=ruby]
+leslie = Matrix[[0,  0.6, 1.1,0.9,0.1 ,0  ,0   ,0   ,0],
+                [0.7,0,   0,  0,  0,   0  ,0   ,0   ,0],
+                [0,  0.85,0,  0,  0,   0  ,0   ,0   ,0],
+                [0,  0,   0.9,0,  0,   0  ,0   ,0   ,0],
+                [0,  0,   0,  0.9,0,   0  ,0   ,0   ,0],
+                [0,  0,   0,  0,  0.88,0  ,0   ,0   ,0],
+                [0,  0,   0,  0,  0,   0.8,0   ,0   ,0],
+                [0,  0,   0,  0,  0,   0,  0.77,0   ,0],
+                [0,  0,   0,  0,  0,   0,  0,   0.40,0]]
+
+x_3new = leslie * x_2
+x_4new = leslie * x_3new
+x_5new = leslie * x_4new
+
+populations_new = [
+                   x_2.to_a.flatten.inject(&:+) * 10000,
+                   x_3new.to_a.flatten.inject(&:+) * 10000,
+                   x_4new.to_a.flatten.inject(&:+) * 10000,
+                   x_5new.to_a.flatten.inject(&:+) * 10000
+                  ]
+
+content << "\n\nWith 2020's second set modified.
+"
+
+content <<  "2020: #{populations_new[0]}
+2030: #{populations_new[1]}
+2040: #{populations_new[2]}
+2050: #{populations_new[3]}
+"
+content << "largest lambda: #{leslie.power_method}\n"
+
+content << "2020 -> 2030: %.2f\%
+2030 -> 2040: %.2f\%
+2040 -> 2050: %.2f\%" % [((populations_new[1] - populations_new[0]) / populations_new[0] * 100),
+                         ((populations_new[2] - populations_new[1]) / populations_new[1] * 100),
+                         ((populations_new[3] - populations_new[2]) / populations_new[2] * 100)]
+
+output.write(content)
+\end{lstlisting}
+
+The problem asks to decrease the birth rate of the second age group by half in 2020
 and then predict the population for 2030, 2040 and 2050, discussing again the meaning
 of the eigenvalue for this new matrix over a long period of time.
 
@@ -629,25 +868,32 @@ This was approached by changing the original Leslie matrix to reflect the new ch
 in birth rate and then applying the previous method of calculating using the total populations
 and fractional change for the years of 2030, 2040, and 2050. 
 
-The newly computed eigenvalue is $1.16790279$. The new populations of the following years are:
+The newly computed eigenvalue is 1.16790279. The new populations of the following years are:
 
-\begin{tabular}{l r}
+\vspace{11pt}
+
+\begin{tabular}{l l}
 2020: & 182815.0 \\
 2030: & 194542.4 \\
 2040: & 224593.967 \\
 2050: & 262190.9132
 \end{tabular}
-\\
+
+\vspace{11pt}
 
 and the percentage of change in populations are
 
-\begin{tabular}{l r}
+\vspace{11pt}
+
+\begin{tabular}{l l}
 2020 $\to$ 2030: & 6.41\% \\
 2030 $\to$ 2040: & 15.45\% \\
 2040 $\to$ 2050: & 16.74\%
 \end{tabular}
 
-These values were arrived at by first altering the Leslie matrix as seen here <pt3.rb:113> where
+\vspace{11pt}
+
+These values were arrived at by first altering the Leslie matrix as seen above, where
 the birth rate of the second age group, which was previous at 1.2 was decreased to 0.6.
 This birth rate changes in 2020 so the population distribution in 2010 and 2020 remains the same as
 presented in the data.
@@ -655,13 +901,13 @@ In calculating the distribution in 2030, the calculation used before still appli
 new Leslie matrix.
 The population distribution in 2030 is equal to the new Leslie matrix times the population
 distribution in 2020.
-In Ruby this looks like <pt3.rb:123-125>, where \texttt{x\_3new, x\_4new, x\_5new} are all of the new
-distribution matrices.
+In Ruby this looks like \texttt{x\_3new = leslie * x\_2} and the code following it,
+where \texttt{x\_3new, x\_4new, x\_5new} are all of the new distribution matrices.
 Once these are calculated the total populations can be found by using the same method earlier,
-which was to add each of the numbers in the population distribution <pt3.rb:132-137>.
+which was to add each of the numbers in the population distribution in \texttt{populations\_new}.
 Finding the percent change was also the same as previously done. 
 
-The eigenvalue is computed by using the Power Method on the new Leslie matrix, using a simple call to the method <pt3.rb:147>
+The eigenvalue is computed by using the Power Method on the new Leslie matrix, using a simple call to the method \texttt{leslie.power\_method}
 
 This eigenvalue is still a positive number greater than 1, showing a population that will still grow positively and eventually
 level off at a factor of 1.167902791647756 for the new birth rate, which is somewhat lower than the previous rate.
