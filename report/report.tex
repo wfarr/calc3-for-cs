@@ -477,7 +477,7 @@ Lots of stuff about Gauss-Seidel Method.
 
 The purpose of Part Three is to implement the Power Method in order to find the
 largest eigenvalue of an $n \times n$ matrix, in particular a Leslie matrix that
-models the population of a city.
+models the population of a city. Using the Leslie matrix we can study the growth of populations by modeling the population distribution in future years and exploring the meaning of the Leslie matrix eigenvalue.
 
 \subsection{Leslie Matrices}
 
@@ -487,25 +487,25 @@ average number of female offsprings of that age group, or the fecundity.
 The following numbers in each column are the fractions of people surviving to the
 next age class.
 Each entry in the given population distribution matrix is the part of the
-population in that age group, each one being of ten years.
+population in that age group, each group being of ten years (0-9,10-19, etc).
 The first population distribution matrix given is for the year 2000 and is shown
-later in the code.
+later in listing 7.
 
-The given Leslie Matrix of the city shown in Ruby is shown later on in listing 8.
+The given Leslie Matrix of the city shown in Ruby is shown later on in listing 7 as well.
 
 \subsection{Power Method}
 
 The Power Method is used to calculate eigenvalues of $n \times n$ matrices.
-It the class notes it was shown that after defining 
+In the class notes it was shown that after defining 
 
 \[\vec{u}(n+1) = A\vec{u}(n)\]
 
 it follows that
 
-\[\lim_{n\to\infty} \frac{{w} \cdot {u(n+1)}}{ {w} \cdot {u(n)}} =\lambda\]
+\[\lim_{n\to\infty} \frac{{\vec{w}} \cdot {\vec{u}(n+1)}}{ {\vec{w}} \cdot {\vec{u}(n)}} =\lambda\]
 
 The following is an implementation of the Power Method in Ruby.
-Its explanation is found in the following solutions.
+Its explanation is found in the solutions below.
 
 \subsection{Implementation of the Power Method}
 \lstset{caption=Power Method}
@@ -577,7 +577,7 @@ Looking at the data in each of the columns of the matrix, the fraction of
 surviving individuals varies due to several factors.
 The number in each column represents the surviving fraction that makes it to the
 next group.
-Newborns of age 0-9 have a fraction of .7 possibly due to infant deaths which
+Newborns of age 0-9 have a survival rate of .7 possibly due to infant deaths which
 occur due to birth complications and medical problems.
 The survival rates increase in the groups of 10-19 and 20-29, particularly
 because individuals are the healthiest during this "prime" of their life.
@@ -625,7 +625,7 @@ x_5 = leslie * x_4 #=> Matrix[[13.41322675], [6.7595395], [4.856628], [2.7779062
 
 populations = [
                x_0.to_a.flatten.inject(&:+) * 10000,
-	       x_1.to_a.flatten.inject(&:+) * 10000,
+               x_1.to_a.flatten.inject(&:+) * 10000,
                x_2.to_a.flatten.inject(&:+) * 10000,
                x_3.to_a.flatten.inject(&:+) * 10000,
                x_4.to_a.flatten.inject(&:+) * 10000,
@@ -702,20 +702,23 @@ With the fractional change of the total population:
 
 \vspace{11pt}
 
-By implementing the formula given in the problem,
-$x(k + 1) = A\vec{x}(k), \quad k = 0,1,2,3,4,5$ and $\vec{x}(0)$ the given
+By implementing the formula given in the problem
+
+\[\vec{x}(k + 1) = A\vec{x}(k)\]
+ 
+where $k = 0,1,2,3,4,5$ and $\vec{x}(0)$ is the given
 population distribution, the population distribution could be calculated for
 each decade increase.
 This, more simply put, is a multiplication of the Leslie matrix with the
 previous population distribution. This is seen in the code as
 \texttt{x\_1 = leslie * x\_0} where \texttt{x\_0} is the $\vec{x}(0)$ population
-distribution.
+distribution. The next decades are calculated in the same manner.
 In order to find the total population of one year, a simple summation of the
 elements of each of the population distribution matrices (multiplied by $10^5$)
 shown in the code as \texttt{population} gives the total population.
 The percent increase of the population was calculated by taking the difference
 in total population divided by the previous population,
-for each decade as the last bit of code. 
+for each decade as seen in the last portion of the code in listing 7. 
 
 \subsubsection{Obtaining the Eigenvalue and its Meaning}
 
@@ -742,7 +745,7 @@ The general formula for the power method can be found in the web notes by Laszlo
 for \textit{Linear Algebra: Numerical Methods in Numerical Computation of Eigenvalues}(p 62).
 
 
-\[\lim_{n\to\infty} \frac{{w} \cdot {u(n+1)}}{ {w} \cdot {u(n)}} =\lambda\]
+\[\lim_{n\to\infty} \frac{{\vec{w}} \cdot {\vec{u}(n+1)}}{ {\vec{w}} \cdot {\vec{u}(n)}} =\lambda\]
 
 where $\vec{w}$ and $\vec{u}_0$ are randomly chosen nonzero vectors.
 As shown in the declarations of \texttt{u\_prev} and \texttt{w} in the power
@@ -771,8 +774,7 @@ The break statement terminates the loop after the difference in lambdas is less
 than $10^{-8}$, guaranteeing that precision.
 The first iteration does not have a lambda to compare so it occurs outside and
 before the loop, creating some repetition of code.
-When converting matrices to arrays in order to multiply the inner product a
-small problem is presented by the conversion in Ruby.
+When converting matrices to arrays in order to multiply the inner product we encounter a small problem in Ruby.
 When using the \texttt{Matrix\#.to\_a} the given matrix is converted to an
 array of arrays containing numbers instead of just an array of numbers.
 To take care of this, a new array is created and filled with the elements of
@@ -792,7 +794,7 @@ Obtaining the eigenvalue of 1.28865626 reveals the eventual behavior of the
 population of the given city.
 The eigenvalue is greater than 1 which means the population will grow.
 If it was less than 1, the population would over time become extinct and if
-it was equal to 1 then the population would remain stable.
+it was equal to 1 then the population would remain the same, with equal birth and death.
 This can be shown using the theorem covered in chapter 4 of Erdos's notes (p 49):
 
 \begin{quote}
@@ -805,9 +807,9 @@ When looking at the iterative model given in the question
 
 \[\vec{x}(k) = A^k \vec{x}(0)\]
 
-it is possible to see that a norm that converged to zero with a large enough k would eventually give a population of zero.
+it is possible to see that a norm that converges to zero with a large enough k would eventually give a population of zero when multiplied by the distribution vector.
 This would happen if the largest eigenvalue was less than 1, and it can be drawn that because our eigenvalue computed for
-the Leslie matrix is greater than 1 the population must grow at that rate.
+the Leslie matrix is greater than 1 the population must grow, getting closer to that rate as k gets larger.
 
 Therefore we arrive at the equation
 
@@ -817,7 +819,7 @@ for large values of $n$, where $\lambda$ is the dominant or largest eigenvalue.
 \end{quote}
 
 This shows that as n gets larger $\vec{x}(n+1)$ is a scalar multiple of $\vec{x}(n)$ and if that scalar,
-the computed eigenvalue, is positive the population will grow by that growth rate,
+the computed eigenvalue, is positive the population will eventually grow by that growth rate,
 as shown in our given case of the population of a city.
 
 \subsubsection{Supposing a Change in Birth Rate}
@@ -918,8 +920,8 @@ The eigenvalue is computed by using the Power Method on the new Leslie matrix, u
 
 This eigenvalue is still a positive number greater than 1, showing a population that will still grow positively and eventually
 level off at a factor of 1.167902791647756 for the new birth rate, which is somewhat lower than the previous rate.
-The population totals show the growing population diminishes due to the halved birthrate of the second age group in 2020 and by
+The population totals show the growing populations diminish due to the halved birthrate of the second age group in 2020. By
 2050 where the population would have been 338794.2932 it is now 262190.9132.
-However, the population will not diminish because it's dominant eigenvalue is still greater than 1.
+However, in the long run the population will not diminish because it's dominant eigenvalue is still greater than 1.
 
 \end{document}
