@@ -25,6 +25,7 @@
 
 \usepackage{hyperref}
 
+\usepackage{float}
 \usepackage{graphics}
 
 \author{Will Farrington, Jeff Drasher, Mike Hirth}
@@ -433,13 +434,11 @@ N = 2
 \\sol = Vector[-20, 7980, -790020, 34321980, -823727520, 12355912800, -124932007200, 894921112800, -4698335842200, 18503322637800, -55509967913400, 127994058246600, -227544992438400, 311023037001600, -323717854838400, 251780553763200, -141626561491800, 54396360988200, -12759640231800, 1378465288200]
 \end{quote}
 
-
-\begin{figure}[h] 
+\begin{figure}[H]
   \centering
   \includegraphics{LU.png}
   \caption{\label{LU}Error for LU Decomposition.}
 \end{figure}
-
 
 \subsection{Householder Reflections}
 
@@ -661,12 +660,11 @@ N = 2
 \\err2 = 1.33007968616477
 \end{quote}
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \includegraphics{householder.png}
   \caption{\label{householder}Error for Householder Reflection.}
 \end{figure} 
-
 
 There are a few trends to examine within these results.
 First and foremost, it is clear that for the first handful of iterations, the
@@ -908,7 +906,8 @@ N = 2
 \\err2 = 3.44515872161303
 \end{quote}
 
-\begin{figure}[h] 
+
+\begin{figure}[H]
   \centering
   \includegraphics{givens.png}
   \caption{\label{givens}Error for Givens Rotation.}
