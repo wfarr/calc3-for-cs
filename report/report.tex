@@ -352,7 +352,10 @@ Below are the results from the solving $LU\vec{x} = \vec{b}$ for $\vec{x}$.
 \texttt{sol} is the solution vector.
 Errors are not listed for these computations because the resulting errors are
 all 0.
-This is because
+This is because the LU algorithm used here doesn't introduce any additional
+error.
+However, there is still technically error inherent in the problem itself,
+which can be found by evaluating $cond{(LU)}$ because $cond(A) = cond(LU) \le cond(L) cond(U)$.
 
 \begin{quote}
 N = 2
