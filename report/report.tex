@@ -702,20 +702,55 @@ cond(N=12): 4.02515205148727e+14
 
 Having let the program run for twenty minutes, fully utilizing one 2.4Ghz core
 and 8MB RAM, we determined that the solution could not be computed.
-The only logical conclusion for this is that the resulting condition number
-must be outside floating point accuracy.
-This would be because the matrix itself is ill-conditioned, having incredibly
+This was because the Power Method did not converge to an eigenvalue for
+$||R^{-1}||$.
+This is most likely because the matrix itself is ill-conditioned, having incredibly
 small eigenvalues.
 This is more than likely a contributing factor of the inaccuracy of the results
 after the 13th iteration.
 
 \subsection{Givens Rotations}
 
-Lots of stuff about Givens Rotations.
+The Givens Rotation, like the Householder Reflection, is a more efficient and
+stable decomposition method than Gram-Schmidt.
+Unlike the Householder Reflection, however, the Givens Rotation uses counterclockwise
+rotations in order to zero out items below the diagonal.
+This is done based off of the principle of a standard rotation matrix in 2 dimensions:
+
+\[\left[ \begin{array}{cc} c & s \\ -s & c \end{array} \right]
+\left[ \begin{array}{c} a \\ b \end{array} \right] =
+\left[ \begin{array}{c} r \\ 0 \end{array} \right] \]
+
+where
+
+\[c = \frac{a_{ii}}{\sqrt{a^2_{ii} + a^2_{ij}}}\]
+
+and
+
+\[s = - \frac{a_{ij}}{\sqrt{a^2_{ii} + a^2_{ij}}}\]
+
+and $c$ and $s$ represent $\cos{\theta}$ and $\sin{\theta}$ respectively.
 
 \subsubsection{Explanation of the Algorithm}
 
-Snafu
+\begin{enumerate}
+\item Iterate through the columns of $A$, looking for non-zero entries below the diagonal.
+  When such an entry is found, let it be $a_{ij}$.
+
+\item Find $c$ and $s$ using the formulas above.
+
+\item Create a new Identity matrix of size $n$, called $G_n$.
+
+\item Replace $g_{ii}$ and $g_{jj}$ with $c$.
+  Then, replace $g_{ij}$ with $-s$ and $g_{ji}$ with $s$.
+
+\item Let $A_n = G_n A_{(n - 1)}$.
+
+\item Repeat the above process until $A_n$ is upper triangular.
+
+\item $Q = G_1^t G_2^t ... G_n^t$ and $R = A_n$.
+
+\end{enumerate}
 
 \subsubsection{Implementation of the Algorithm}
 
@@ -748,6 +783,19 @@ class Matrix
 end
 \end{lstlisting}
 
+\texttt{Matrix\#givens}, like \texttt{Matrix\#householder}, iterates across the
+column vectors of $A_n$.
+The nested \texttt{for} loops serve to track $i$ and $j$ for the iterations.
+The inner loop automatically skips to the next iteration unless the current
+$j$ is below the diagonal.
+Next, \texttt{c} and \texttt{s} are assigned, and inserted into \texttt{g}.
+The \texttt{Array} $\to$ \texttt{Matrix} conversion is again used due to the lack of
+an \texttt{Matrix\#[]=} method.
+
+Once the loops are finished, \texttt{q} and \texttt{r} are computed, with a
+\texttt{map} to transpose the $G_n$ and an \texttt{inject}ion to find the product
+of all $G_n$ in the case of the former.
+Finally, they are returned.
 \\
 \subsubsection{Results and Analysis}
 
@@ -854,6 +902,40 @@ N = 2
   \caption{\label{givens}Error for Givens Rotation.}
 \end{figure}
 
+Again, like the Householder Reflection method, the Givens Rotation suffers odd
+errors once it reaches the $13 \times 13$ Hilbert matrix.
+And again, the problem arises because it is an ill-conditioned matrix.
+
+\lstset{caption=Determining cond(R) for Givens}
+\begin{lstlisting}[language=ruby]
+for i in 2..20
+  m = Matrix.hilbert(i)
+  q,r = m.givens
+  r_norm = r.power_method.abs
+  r_inv_norm = r.inverse.power_method.abs
+  puts "cond(N=#{i}): #{r_norm * r_inv_norm}"
+end
+\end{lstlisting}
+
+Results were:
+
+\begin{quote}
+cond(N=2):  15.0000011125923
+\\cond(N=3):  299.040144310689
+\\cond(N=4):  6349.7651396892
+\\cond(N=5):  138457.652248714
+\\cond(N=6):  3063599.34834093
+\\cond(N=7):  68420350.0720479
+\\cond(N=8):  1537937656.71739
+\\cond(N=9):  34733602598.1239
+\\cond(N=10): 787216766308.864
+\\cond(N=11): 17863296168299.8
+\\cond(N=12): 4.05102981075616e+14
+\\cond(N=13): 2.11135930217763e+16
+\end{quote}
+
+The Givens Rotation's $cond(R)$ ceases to calculate at $N=14$,
+one dimension after the Householder Reflection.
 
 \newpage
 \section{Part Two}
