@@ -979,162 +979,230 @@ for the relationship between the matrices' eigenvalues).
 %% By: Jeff Drasher
 %%
 
-\lstset{caption=Convolutional Code}
+This problem is centered around the rate $\frac{1}{2}$ convolutional code.
+The convolutional code takes in one binary stream of data ($x$), and encodes
+it into two different binary output streams $Y_1$ and $y_0$.
+This section focuses on how this encoding formula can be recompiled into a
+linear transformation problem of the form $A\vec{x} = \vec{y}$.
+The encoding itself will be split into two separate problems.
+Although it is possible to create one matrix to encode any data stream, it
+is more convenient when decoding to use two separate matrices for the two
+output streams.
+This will be seen when using iterative methods to decode the output streams.
+
+\subsection{Convolutional Encoding}
+
+The first step to create a linear transformation from the convolutional code
+was to establish the two different algorithms for producing the output streams.
+
+\[y_n^0 = x_n + x_{(n-2)} + x_{(n-3)}\]
+\[y_n^1 = x_n + x_{(n-1)} + x_{(n-3)}\]
+
+From these two statements one can derive the Matrices that represent encoding
+into either data stream.
+Here are two Java methods that will take an empty matrix of the appropriate
+size and fill it with entries for the encoding method.
+
+\lstset{caption=Creating the Matrices Necessary for Part Two}
 \begin{lstlisting}[language=java]
-import java.util.Random;
-
-public class ConvolutionalCode
-{
-    public static void main (String[] args)
-    {
-
-        Matrix input, output, Y0, Y1, A, B;
+public class Matrix {    
+    //fills a matrix to correctly encode the y0 stream    
+    public Matrix fillMatrixZero() {
+        int length = this.length;
+        for (int i = 0; i < length; i++)
+            for (int j = 0; j < length; j++)
+                if (i >= j) {
+                    if (i == j) {
+                        this.entry[i][j] = 1;
+                    }
+                    if (i == j + 2) {
+                        this.entry[i][j] = 1; }
+                    if (i == j + 3) {
+                        this.entry[i][j] = 1; }
+                } else {
+                    this.entry[i][j] = 0;
+                }
+        return this;
+    }
     
-        //Encode specific input sequence
-        double[] vector = {1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0};
-        input = new Matrix(vector);
-        System.out.print(input);
-        System.out.println("Encoding...");
-    
-        //Encodes the Y0 output stream for the input
-        A = new Matrix(input.length, input.length);
-        A = A.fillMatrixZero();
-        Y0 = A.matrixMultiply(input);
-        System.out.print(Y0);
-
-        //Encode the Y1 output stream for the input
-        B = new Matrix(input.length, input.length);
-        B = B.fillMatrixOne();
-        Y1 = B.matrixMultiply(input);
-        System.out.print(Y1);
-
-        //Generates a random input stream and encodes both output streams
-        input = Matrix.generateInput();
-        A = new Matrix(input.length, input.length);
-        A = A.fillMatrixZero();
-        B = new Matrix(input.length, input.length);
-        B = B.fillMatrixOne();
-        Y0 = A.matrixMultiply(input);
-        Y1 = B.matrixMultiply(input);
-        System.out.println("Generating input...");
-        System.out.print(input);
-        System.out.print("Encoding...");
-        System.out.print(Y0);
-        System.out.print(Y1);
-
-        //Generates two random output stream and decodes their input streams using
-        //Jacobi and Gauss-Seidel iterations. The first random stream is decoded as
-        //a Y0 stream and the second as a Y1 stream. Both iterative methods are fun 8 times.
-        int maxit = 8;
-        System.out.println("Generating random output...");
-        output = Matrix.generateOutput();
-        A = new Matrix(output.length, output.length);
-        A = A.fillMatrixZero();
-        B = new Matrix(output.length, output.length);
-        B = B.fillMatrixOne();
-        System.out.print(output);
-        System.out.println("Decoding...");
-        input = output.jacobiIteration(A, maxit);
-        System.out.print(input);
-        input = output.gaussseidelIteration(A, maxit);
-        System.out.print(input);
-
-        System.out.println("Generating random output...");
-        output = Matrix.generateOutput();
-        A = new Matrix(output.length, output.length);
-        A = A.fillMatrixZero();
-        B = new Matrix(output.length, output.length);
-        B = B.fillMatrixOne();
-        System.out.print(output);
-        System.out.println("Decoding...");
-        input = output.jacobiIteration(B, maxit);
-        System.out.print(input);
-        input = output.gaussseidelIteration(B, maxit);
-        System.out.print(input);
-
-        System.out.print("Done");    
+    //fills a matrix to encode the y1 stream
+    public Matrix fillMatrixOne() {
+        int length = this.length;
+        for (int i = 0; i < length; i++) {
+            for (int j = 0; j < length; j++) {
+                if (i >= j) {
+                    if (i == j) {
+                        this.entry[i][j] = 1;
+                    }
+                    if (i == j + 1) {
+                        this.entry[i][j] = 1;
+                    }
+                    if(i == j + 3) {
+                        this.entry[i][j] = 1;
+                    }
+                } else {
+                    this.entry[i][j] = 0;
+                }
+            }
+        }
+        return this;
     }
 }
 \end{lstlisting}
 
+From this point one only has to multiply an input stream by the matrix to
+calculate the desired output stream.
+Below is Java code that will encode the input stream: 
 
-\lstset{caption=Algorithms}
+\[ x = (1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0) \]
+
+\lstset{caption=Encoding the Stream}
 \begin{lstlisting}[language=java]
-import java.util.Random;
+input = Matrix.generateInput();
+A = new Matrix(input.length, input.length);
+A = A.fillMatrixZero();
+B = new Matrix(input.length, input.length);
+B = B.fillMatrixOne();
+Y0 = A.matrixMultiply(input);
+Y1 = B.matrixMultiply(input);
+\end{lstlisting}
 
-public class ConvolutionalCode
-{
-    public static void main (String[] args)
-    {
+With the results:
 
-        Matrix input, output, Y0, Y1, A, B;
-    
-        //Encode specific input sequence
-        double[] vector = {1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0};
-        input = new Matrix(vector);
-        System.out.print(input);
-        System.out.println("Encoding...");
-    
-        //Encodes the Y0 output stream for the input
-        A = new Matrix(input.length, input.length);
-        A = A.fillMatrixZero();
-        Y0 = A.matrixMultiply(input);
-        System.out.print(Y0);
+\begin{quote}
+\[y^0 = (1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0)\]
+\[y^1 = (1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1)\]
+\end{quote}
 
-        //Encode the Y1 output stream for the input
-        B = new Matrix(input.length, input.length);
-        B = B.fillMatrixOne();
-        Y1 = B.matrixMultiply(input);
-        System.out.print(Y1);
+\subsection{Jacobi Method}
 
-        //Generates a random input stream and encodes both output streams
-        input = Matrix.generateInput();
-        A = new Matrix(input.length, input.length);
-        A = A.fillMatrixZero();
-        B = new Matrix(input.length, input.length);
-        B = B.fillMatrixOne();
-        Y0 = A.matrixMultiply(input);
-        Y1 = B.matrixMultiply(input);
-        System.out.println("Generating input...");
-        System.out.print(input);
-        System.out.print("Encoding...");
-        System.out.print(Y0);
-        System.out.print(Y1);
+The Jacobi Method is an iterative method used to solve the problem of the form
+$A\vec{x} = \vec{y}$ through a number of iterations until the algorithm converges.
+Since this problem is addressed entirely in binary, there is no large amount of
+error to worry about, the number of iterations to find the correct solution will
+be lower than usual.
 
-        //Generates two random output stream and decodes their input streams using
-        //Jacobi and Gauss-Seidel iterations. The first random stream is decoded as
-        //a Y0 stream and the second as a Y1 stream. Both iterative methods are fun 8 times.
-        int maxit = 8;
-        System.out.println("Generating random output...");
-        output = Matrix.generateOutput();
-        A = new Matrix(output.length, output.length);
-        A = A.fillMatrixZero();
-        B = new Matrix(output.length, output.length);
-        B = B.fillMatrixOne();
-        System.out.print(output);
-        System.out.println("Decoding...");
-        input = output.jacobiIteration(A, maxit);
-        System.out.print(input);
-        input = output.gaussseidelIteration(A, maxit);
-        System.out.print(input);
+To implement Jacobi method the coordinate formula is used, derived originally
+from the Jacobi decomposition, both are shown below:
 
-        System.out.println("Generating random output...");
-        output = Matrix.generateOutput();
-        A = new Matrix(output.length, output.length);
-        A = A.fillMatrixZero();
-        B = new Matrix(output.length, output.length);
-        B = B.fillMatrixOne();
-        System.out.print(output);
-        System.out.println("Decoding...");
-        input = output.jacobiIteration(B, maxit);
-        System.out.print(input);
-        input = output.gaussseidelIteration(B, maxit);
-        System.out.print(input);
+\[\vec{x}^{(n)} = -D^{-1}(L + U)\vec{x}^{(n-1)} + D^{-1}\vec{b}\]
 
-        System.out.print("Done");    
+\[x_i^{(n)} = \frac{1}{a_{ii}} ( b_i - \sum_{j:j != i} a_{ij}x_{j}^{(n-1)}) \]
+
+The algorithm is taken from \textit{Linear Algebra for Math2601: Numerical Methods} (p 51).
+
+The algorithm implemented in Java code is shown here.
+
+\lstset{caption=Jacobi Implementation}
+\begin{lstlisting}[language=java]
+public class Matrix {
+    public Matrix jacobiIteration(Matrix A, int maxit) {
+        int k, i, j;
+        
+        Matrix result = new Matrix (A.length, maxit);
+        for (k = 0; k < maxit; k++) {
+            for (i = 0; i < this.length; i++) {
+                double sum = 0;
+                for (j = 0; j < A.length; j++) {
+                    if (i != j) {
+                        if (k == 0) {
+                            sum = 0;
+                        } else {
+                            sum = ((A.entry[i][j] * result.entry[j][k - 1]) + sum) % 2;
+                        }
+                    }
+                }
+                result.entry[i][k] = (1 / A.entry[i][i]) * ((Math.abs(this.entry[i][0] - sum))) % 2;
+            }
+        } 
+        return result;
     }
 }
 \end{lstlisting}
+
+Here the modulus 2 operator is used to implement binary addition and subtraction.
+This method can be used to solve for the original input stream of any randomly
+generated output stream $y^0$ or $y^1$.
+The proper convolutional code matrix is passed into the method by the matrix
+parameter along with the number of iterations to perform.
+
+For the cases tested the Jacobi iteration usually converged within 6 iterations.
+
+\subsection{Gauss-Seidel Method}
+
+The Gauss-Seidel method is another iterative method used to solve linear systems.
+Once again, the error in this system is not large because it has been implemented
+in binary.
+Gauss-Seidel is generally held to converge faster than the Jacobi iteration in
+most situations, and the actual formula looks similar to the Jacobi Method.
+
+Here are the formulas as they appear in \textit{Linear Algebra for Math2601: Numerical Methods} (p 55):
+
+\[\vec{x}^{(n)} = (L + D)^{-1}(\vec{b} - U \vec{x}^{(n-1)})\]
+
+\[x_i^{(n)} = \frac{1}{a_{ii}}(b_i - \sum_{j=1}^{i-1} a_{ij}x_{j}^{(n)} - \sum_{j=i+1}^{n} a_{ij}x_{j}^{(n-1)}) \]
+
+Here is the method implemented in Java.
+
+\lstset{caption=Gauss-Seidel Implementation}
+\begin{lstlisting}[language=java]
+public class Matrix {
+    public Matrix gaussseidelIteration(Matrix A, int maxit) {
+        int k, i, j;
+        
+        Matrix result = new Matrix (A.length, maxit);
+        for (k = 0; k < maxit; k++) {
+            for (i = 0; i < this.length; i++) {
+                double sum = 0;
+                for (j = 0; j <= i-1; j++) {
+                    sum = ((A.entry[i][j] * result.entry[j][k]) + sum) % 2;    
+                }
+                for (j = i + 1; j < A.length; j++) {    
+                    if (k == 0) {
+                        sum = (A.entry[i][j] * 0 + sum) % 2;
+                    } else {
+                        sum = ((A.entry[i][j] * result.entry[j][k - 1]) + sum) % 2;
+                    }
+                    result.entry[i][k] = (1 / A.entry[i][i]) * ((Math.abs(this.entry[i][0] - sum))) % 2;
+                }
+            }
+        }
+        return result;
+    }
+}
+\end{lstlisting}
+
+As with the Jacobi iteration, the modulus 2 operator is used to implement binary
+arithmetic.
+This method can also be used to solve for the input stream of any randomly
+generated why output stream.
+Again, the correct output stream matrix is passed in as a parameter along
+with the number of iterations.
+
+In all cases tested, the Gauss-seidel method converged in two-three iterations.
+
+\subsection{Results and Analysis}
+
+The results of decoding random output streams are shown in an $n \times m$ matrix
+where $n$ is the length of the output stream and resultant input vector, and $m$
+is the number of iterations.
+The last column of the matrix, the largest $m$, is the final result of the
+iterative method.
+This visual representation helps to see the methods progress over a set number
+of iterations.
+Below are results from some test cases run in Java.
+
+%% Results go here
+
+Results go here
+
+The Gauss-seidel appears to always be more efficient, converging faster than Jacobi.
+Since error is not an issue within this binary system, Gauss-seidel will always be
+a faster and more efficient choice to decode any output stream.
+Every Gauss-seidel iteration matches up with every other Jacobi iteration, since it
+is converging about twice as faster.
+For most test cases, Gauss-seidel would converge in two to three iterations while
+Jacobi would take closer to five or six.
 
 \newpage
 \section{Part Three}
