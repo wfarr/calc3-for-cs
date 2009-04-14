@@ -268,6 +268,8 @@ The algorithm for doing so is fairly simple in and of itself:
 \item Substitute $A$ with $LU$ in the equation $A\vec{x}=\vec{b}$ and solve.
 \end{enumerate}
 
+This is commonly known as the Doolittle algorithm.
+
 \subsubsection{Implementation of the Algorithm}
 
 \lstset{caption=LU Decomposition}
@@ -345,6 +347,12 @@ Thus, the result of the injection is to multiply all the results of the map
 together, in order.
 
 \subsubsection{Results and Analysis}
+
+Below are the results from the solving $LU\vec{x} = \vec{b}$ for $\vec{x}$.
+\texttt{sol} is the solution vector.
+Errors are not listed for these computations because the resulting errors are
+all 0.
+This is because
 
 \begin{quote}
 N = 2
