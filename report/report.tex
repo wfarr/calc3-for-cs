@@ -418,11 +418,28 @@ N = 2
 
 \subsection{Householder Reflections}
 
-Lots of stuff about Householder Reflections.
+The Householder Reflection is, as Wikipedia might say: ``a linear transformation
+that describes a reflection in a hyperplane (containing the origin)''.
 
 \subsubsection{Description of the Algorithm}
 
-Snafu.
+\begin{enumerate}
+\item Let $a$ be the first column of the given matrix $A$.
+\item Let $u = (a_1 + sign(a_1) * ||a_1||, a_2, a_3, ..., a_n)^t$.
+\item Let $H(a) = I - 2 \frac{uu^t}{||u||^2}$.
+\item If $H(a)$ is the same size as $A$, $H(a_1) = H_1$.
+  Else, let $H_1$ be an Identity matrix, where the bottom right $n \times n$
+  entries are the contents of $H(a)$.
+\item Let $A_1 = H_1 A$.
+\item Let $a2$ be the second column of $A_1$, using only the items including
+  and below the diagonal.
+\item Let $u = (a2_1 + sign(a2_1) * ||a2_1||, a2_2, a2_3, ..., a2_n)$.
+\item Find $H(a2)$ as described above.
+\item Find$H_2$ as described above.
+\item Let $A_2 = H_2 A_1$.
+\item Repeat the above as necessary until $A_n$ is upper triangular. $A_n = R$
+\item $Q = H_1 H_2 H_{(n-1)} H_n$.
+\end{enumerate}
 
 \subsubsection{Implementation of the Algorithm}
 
