@@ -949,6 +949,30 @@ cond(N=2):  15.0000011125923
 The Givens Rotation's $cond(R)$ ceases to calculate at $N=14$,
 one dimension after the Householder Reflection.
 
+\subsection{Comparing All Three Algorithms}
+
+While LU is by far the most accurate, the two QR algorithms are much more
+efficient.
+
+As Erdos says in \textit{Linear Algebra for Math2601: Numerical Methods} (p 43):
+
+\begin{quote}
+It is interesting to compare how these two algorithms perform in reality. This can be an
+interesting computer pro ject. A computer test run on randomly generated matrices reveals
+that
+
+\indent (i) Householder is faster, especially for larger matrices, but
+\indent (ii) Givens is slightly more accurate.
+
+The reason is that Householder is a “greedier” algorithm: it tries to zero more elements at
+the same time. Hence it is faster, but “lousier”. Givens is a slow but more accurate algorithm.
+However, the error is in fact almost negligible in both cases.
+\end{quote}
+
+Of course, in Erdos's measurements, the largest matrix he deals with is a $7 \times 7$, and its
+values are assuredly much larger than many of the Hilbert matrices values (the same holds true
+for the relationship between the matrices' eigenvalues).
+
 \newpage
 \section{Part Two}
 
