@@ -517,6 +517,33 @@ class Vector
 end
 \end{lstlisting}
 
+\texttt{Matrix\#householder} begins by asserting that the instance of
+\texttt{self} is a square matrix (which, since it ought to be a Hilbert matrix,
+it should be).
+\texttt{current\_iteration} is assigned to \texttt{self}, for now, but in the
+algorithm itself, it is really $A_n$.
+\texttt{init\_dim} is $n$ for this $n \times n$ matrix, and is used for
+\texttt{Matrix\#expand\_to\_dimensions}, which serves to form an $n \times n$
+matrix the same size as \texttt{self}, where $H(\vec{a\textit{n}})$ is the bottom-right
+$j \times j$ entries of the matrix and all other entries are 0, for iterations of the Householder
+Reflection past the first (as described in step 4).
+Because the Householder Reflection works by essentially iterating across the
+column vectors of a matrix, we store the current column vector in \texttt{cv}.
+\texttt{h} is found by first calling the \texttt{Vector\#find\_householder\_reflection}
+method, which takes \texttt{self} (an instance of \texttt{Vector}) and finds $(I - 2\vec{u}\vec{u}^t / ||\vec{u}||^2)$;
+then, we subtract an Identity matrix of \texttt{cv.size} from it, so that,
+when the matrix is expanded to the right dimensions, we can simply add an
+Identity matrix of size \texttt{init\_dim} to it, and thus determine
+$H_n$.
+\texttt{h} is then appended to \texttt{h\_list}, which stores all given
+$H_n$ matrices so $Q$ can be found at the end of the process.
+\texttt{current\_iteration} then becomes \texttt{h * current\_iteration},
+as it is again $A_n$.
+This process is repeated in the \texttt{for} loop until $A_n$ is upper triangular.
+
+Once the \texttt{for} loop is done, \texttt{q} is found by \texttt{inject}ing \texttt{:*}
+to the array (finding the product of all its elements), and then the method
+returns both \texttt{q} and \texttt{r}.
 \\
 \subsubsection{Results and Analysis}
 
@@ -645,7 +672,7 @@ I used the Power method to find the absolute value of the maximum eigenvalue of
 $A$ to compute the $cond(R)$ to determine the inherent error amplification in the
 problem.
 
-\lstset{caption=Determining cond(R)}
+\lstset{caption=Determining cond(R) for Householder}
 \begin{lstlisting}[language=ruby]
 for i in 2..20
   m = Matrix.hilbert(i)
