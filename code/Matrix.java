@@ -132,7 +132,7 @@ public class Matrix
         for (k = 0; k < maxit; k++) {
             for (i = 0; i < this.length; i++) {
                 double sum = 0;
-                for (j = 0; j < i-1; j++) {
+                for (j = 0; j <= i-1; j++) {
                     sum = ((A.entry[i][j] * result.entry[j][k]) + sum) % 2;    
                 }
                 for (j = i + 1; j < A.length; j++) {    
