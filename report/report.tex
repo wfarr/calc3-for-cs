@@ -486,7 +486,11 @@ end
 Below are the solutions for $n = 2,3,...,20$ and their respective errors.
 \texttt{sol} is the solution to the equation $QR\vec{x}=\vec{b}$, \texttt{err1}
 is $||QR - H||_{\infty}$ and \texttt{err2} is $||H\vec{x} - \vec{b}||_{\infty}$.
-\\
+It is important to note that regardless of the other error measurements, there
+remains inherent error in the original problem; however, it is more stable than
+other decompositions as $Q$ is orthogonal, and its condition number becomes 1,
+making $cond(A) = cond(QR) = cond(R)$.
+
 \begin{quote}
 N = 2
 \\sol = Vector[-2.0, 6.0]
@@ -589,6 +593,50 @@ First and foremost, it is clear that for the first handful of iterations, the
 Householder Reflections are extremely accurate.
 However, it is important to note that inaccuracy present at, and the huge
 increases in \texttt{err2} after $N =13$.
+Since the errors measured above indicated this, but didn't offer any conclusive
+reason why (other than error amplification in $\vec{x}$, further investigations
+were necessary.
+Invoking the same property above, and using the property $||A|| = |\max{\lambda_i}|$,
+I used the Power method to find the absolute value of the maximum eigenvalue of
+$A$ to compute the $cond(R)$ to determine the inherent error amplification in the
+problem.
+
+\lstset{caption=Determining cond(R)}
+\begin{lstlisting}[language=ruby]
+for i in 2..20
+  m = Matrix.hilbert(i)
+  q,r = m.householder
+  norm_r = r.power_method.abs
+  norm_r_inv = r.inverse.power_method.abs
+  puts "cond: #{norm_r * norm_r_inv}"
+end
+\end{lstlisting}
+
+As expected, this code snippet printed out condition numbers for each matrix...
+up until the 13th iteration.
+
+\begin{quote}
+cond(N=2): 15.0000000633676
+cond(N=3): 299.040132219316
+cond(N=4): 6349.76484639525
+cond(N=5): 138457.647018696
+cond(N=6): 3063599.23761458
+cond(N=7): 68420347.6630276
+cond(N=8): 1537937583.62974
+cond(N=9): 34733563292.8343
+cond(N=10): 787269502031.433
+cond(N=11): 17829448576474.5
+cond(N=12): 4.02515205148727e+14
+\end{quote}
+
+Having let the program run for twenty minutes, fully utilizing one 2.4Ghz core
+and 8MB RAM, we determined that the solution could not be computed.
+The only logical conclusion for this is that the resulting condition number
+must be outside floating point accuracy.
+This would be because the matrix itself is ill-conditioned, having incredibly
+small eigenvalues.
+This is more than likely a contributing factor of the inaccuracy of the results
+after the 13th iteration.
 
 \subsection{Givens Rotations}
 
