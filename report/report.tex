@@ -42,13 +42,15 @@ Since it is, for most intents and purposes, a lesser known language than say,
 Java, we felt it necessary to explain bits of the language which might surface
 in the code we wrote for this project.
 
+\subsection{Ruby}
+
 First and foremost, Ruby shares many similarites with, and is inspired by, Lisp,
 Smalltalk, and Perl (most likely in that order).
 It contains many of the niceties of functional programming that Lisp does, it is
 truly object oriented in the same way Smalltalk is, and it is a terse scripting
 language with powerful features like Perl is.
 
-\subsection{Syntax, Language Quirks, Etc.}
+\subsubsection{Syntax, Language Quirks, Etc.}
 
 Notations that might seem confusing unless one has a background in all three of
 these languages are such:
@@ -135,7 +137,7 @@ libraries in Ruby, as well as extensions upon them.
 
 \end{itemize}
 
-\subsection{Common Code}
+\subsubsection{Common Code}
 
 Additionally, we wrote an abstraction layer into some of these classes via
 monkeypatching in order to add some common functionality:
@@ -198,6 +200,13 @@ class Matrix
   end
 end
 \end{lstlisting}
+
+\subsection{Java}
+
+Part Two is written in Java.
+The code therein extends the Matrix class with a few methods and constructors.
+We assume that Java's syntax is understood by the reader given its prominence,
+especially here at Georgia Tech.
 
 \subsection{About This Document}
 
