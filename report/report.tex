@@ -257,10 +257,16 @@ $A\vec{x}=\vec{b}$ easier.
 Such algorithms introduce the potential for error, namely because they are
 modified forms of the original matrix.
 
+All of the algorithms used in this section are taken from \textit{Linear Algebra for Math2601: Numerical Methods}
+by Laszlo Erdos, chapters 1-3.
+
 \subsection{LU Decomposition}
 
 LU Decomposition uses matrix multiplication to reduce a matrix $A$ into two
 matrices, $L$ (a lower triangular matrix) and $U$ (an upper triangular matrix).
+
+The algorithm is taken from chapter 2 of \textit{Linear Algebra for Math2601: Numerical Methods}
+(p 22-25).
 
 \subsubsection{Explanation of the Algorithm}
 
@@ -440,6 +446,9 @@ N = 2
 The Householder Reflection is, as Wikipedia might say: ``a linear transformation
 that describes a reflection in a hyperplane (containing the origin)''.
 
+The algorithm is taken from \textit{Linear Algebra for Math2601: Numerical Methods}
+(p 32-35).
+
 \subsubsection{Description of the Algorithm}
 
 \begin{enumerate}
@@ -553,7 +562,7 @@ is $||QR - H||_{\infty}$ and \texttt{err2} is $||H\vec{x} - \vec{b}||_{\infty}$.
 It is important to note that regardless of the other error measurements, there
 remains inherent error in the original problem; however, it is more stable than
 other decompositions as $Q$ is orthogonal, and its condition number becomes 1,
-making $cond(A) = cond(QR) = cond(R)$.
+making $cond(A) = cond(QR) = cond(R)$ (\textit{Linear Algebra for Math2601: Numerical Methods}, pg 30).
 
 \begin{quote}
 N = 2
@@ -730,6 +739,9 @@ and
 \[s = - \frac{a_{ij}}{\sqrt{a^2_{ii} + a^2_{ij}}}\]
 
 and $c$ and $s$ represent $\cos{\theta}$ and $\sin{\theta}$ respectively.
+
+The algorithm is taken from \textit{Linear Algebra for Math2601: Numerical Methods}
+(p 37-41).
 
 \subsubsection{Explanation of the Algorithm}
 
