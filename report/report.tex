@@ -608,7 +608,7 @@ for i in 2..20
   q,r = m.householder
   norm_r = r.power_method.abs
   norm_r_inv = r.inverse.power_method.abs
-  puts "cond: #{norm_r * norm_r_inv}"
+  puts "cond(N=#{i}): #{norm_r * norm_r_inv}"
 end
 \end{lstlisting}
 
