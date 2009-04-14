@@ -1298,7 +1298,7 @@ population in that age group, each group being of ten years (0-9,10-19, etc).
 The first population distribution matrix given is for the year 2000 and is shown
 later in listing 7.
 
-The given Leslie Matrix of the city shown in Ruby is shown later on in listing 7 as well.
+The given Leslie Matrix coded in Ruby is shown later on in listing 7 as well.
 
 \subsection{Power Method}
 
@@ -1541,7 +1541,7 @@ After testing to see if the program returned correct eigenvalues for any square
 matrix, it was passed the Leslie matrix in order to find the largest eigenvalue.
 
 After running the program using the Leslie matrix, the method returns the
-eigenvalue 1.28865626235758.
+eigenvalue 1.28865626 at 8 digits of accuracy.
 
 Implementing the power method in Ruby only required the creation of one method
 because of some shared coding with part 1 including the
@@ -1724,7 +1724,7 @@ Finding the percent change was also the same as previously done.
 The eigenvalue is computed by using the Power Method on the new Leslie matrix, using a simple call to the method \texttt{leslie.power\_method}
 
 This eigenvalue is still a positive number greater than 1, showing a population that will still grow positively and eventually
-level off at a factor of 1.167902791647756 for the new birth rate, which is somewhat lower than the previous rate.
+level off at a factor of 1.16790279 for the new birth rate, which is somewhat lower than the previous rate.
 The population totals show the growing populations diminish due to the halved birthrate of the second age group in 2020. By
 2050 where the population would have been 338794.2932 it is now 262190.9132.
 However, in the long run the population will not diminish because it's dominant eigenvalue is still greater than 1.
