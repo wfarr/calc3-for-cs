@@ -709,8 +709,8 @@ cond(N=11): 17829448576474.5\\
 cond(N=12): 4.02515205148727e+14
 \end{quote}
 
-Having let the program run for twenty minutes, fully utilizing one 2.4Ghz core
-and 8MB RAM, we determined that the solution could not be computed.
+Having let the program run for twenty minutes, fully utilizing one 2.4Ghz core,
+we determined that the solution could not be computed (the execution had hung).
 This was because the Power Method did not converge to an eigenvalue for
 $||R^{-1}||$.
 This is most likely because the matrix itself is ill-conditioned, having incredibly
